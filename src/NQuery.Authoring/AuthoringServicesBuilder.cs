@@ -108,21 +108,21 @@ public sealed class AuthoringServicesBuilder
         AddService<IOutliner, MultiLineCommentOutliner>();
         AddService<IOutliner, SingleLineCommentOutliner>();
 
-        AddService<IQuickInfoModelProvider, CastExpressionQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, CoalesceExpressionQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, CommonTableExpressionColumnNameQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, CommonTableExpressionQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, CountAllExpressionQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, DerivedTableReferenceQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, ExpressionSelectColumnQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, FunctionInvocationExpressionQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, MethodInvocationExpressionQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, NamedTableReferenceQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, NameExpressionQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, NullIfQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, PropertyAccessExpressionQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, VariableExpressionQuickInfoModelProvider>();
-        AddService<IQuickInfoModelProvider, WildcardSelectColumnQuickInfoModelProvider>();
+        AddService<IQuickInfoProvider, CastExpressionQuickInfoProvider>();
+        AddService<IQuickInfoProvider, CoalesceExpressionQuickInfoProvider>();
+        AddService<IQuickInfoProvider, CommonTableExpressionColumnNameQuickInfoProvider>();
+        AddService<IQuickInfoProvider, CommonTableExpressionQuickInfoProvider>();
+        AddService<IQuickInfoProvider, CountAllExpressionQuickInfoProvider>();
+        AddService<IQuickInfoProvider, DerivedTableReferenceQuickInfoProvider>();
+        AddService<IQuickInfoProvider, ExpressionSelectColumnQuickInfoProvider>();
+        AddService<IQuickInfoProvider, FunctionInvocationExpressionQuickInfoProvider>();
+        AddService<IQuickInfoProvider, MethodInvocationExpressionQuickInfoProvider>();
+        AddService<IQuickInfoProvider, NamedTableReferenceQuickInfoProvider>();
+        AddService<IQuickInfoProvider, NameExpressionQuickInfoProvider>();
+        AddService<IQuickInfoProvider, NullIfQuickInfoProvider>();
+        AddService<IQuickInfoProvider, PropertyAccessExpressionQuickInfoProvider>();
+        AddService<IQuickInfoProvider, VariableExpressionQuickInfoProvider>();
+        AddService<IQuickInfoProvider, WildcardSelectColumnQuickInfoProvider>();
 
         AddService<ISelectionSpanProvider, ArgumentListSelectionSpanProvider>();
         AddService<ISelectionSpanProvider, CommonTableExpressionColumnNameListSelectionSpanProvider>();
@@ -132,12 +132,12 @@ public sealed class AuthoringServicesBuilder
         AddService<ISelectionSpanProvider, OrderedQuerySelectionSpanProvider>();
         AddService<ISelectionSpanProvider, SelectClauseSelectionSpanProvider>();
 
-        AddService<ISignatureHelpModelProvider, CastSignatureHelpModelProvider>();
-        AddService<ISignatureHelpModelProvider, CoalesceSignatureHelpModelProvider>();
-        AddService<ISignatureHelpModelProvider, CountAllSignatureHelpModelProvider>();
-        AddService<ISignatureHelpModelProvider, FunctionSignatureHelpModelProvider>();
-        AddService<ISignatureHelpModelProvider, MethodSignatureHelpModelProvider>();
-        AddService<ISignatureHelpModelProvider, NullIfSignatureHelpModelProvider>();
+        AddService<ISignatureHelpProvider, CastSignatureHelpProvider>();
+        AddService<ISignatureHelpProvider, CoalesceSignatureHelpProvider>();
+        AddService<ISignatureHelpProvider, CountAllSignatureHelpProvider>();
+        AddService<ISignatureHelpProvider, FunctionSignatureHelpProvider>();
+        AddService<ISignatureHelpProvider, MethodSignatureHelpProvider>();
+        AddService<ISignatureHelpProvider, NullIfSignatureHelpProvider>();
 
         return this;
     }

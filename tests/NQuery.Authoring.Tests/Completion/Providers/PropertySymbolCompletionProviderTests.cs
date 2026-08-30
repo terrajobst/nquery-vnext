@@ -6,11 +6,11 @@ public class PropertySymbolCompletionProviderTests : SymbolCompletionProviderTes
 {
     private static void AssertIsMatch(string query, Type type, string propertyName)
     {
-        var completionModel = GetCompletionModel(query);
-        var semanticModel = completionModel.SemanticModel;
+        var completionResult = GetCompletionResult(query);
+        var semanticModel = completionResult.SemanticModel;
 
         var property = semanticModel.LookupProperties(type).Single(p => p.Name == propertyName);
-        var propertyItem = completionModel.Items.Single(i => i.InsertionText == property.Name);
+        var propertyItem = completionResult.Items.Single(i => i.InsertionText == property.Name);
         var propertyMarkup = SymbolMarkup.ForSymbol(property);
 
         Assert.Equal(Glyph.Property, propertyItem.Glyph);
@@ -21,8 +21,8 @@ public class PropertySymbolCompletionProviderTests : SymbolCompletionProviderTes
 
     private static void AssertIsNoMatch(string query)
     {
-        var completionModel = GetCompletionModel(query);
-        var hasTables = completionModel.Items.Any(i => i.Symbol is PropertySymbol || i.Glyph == Glyph.Property);
+        var completionResult = GetCompletionResult(query);
+        var hasTables = completionResult.Items.Any(i => i.Symbol is PropertySymbol || i.Glyph == Glyph.Property);
         Assert.False(hasTables);
     }
 

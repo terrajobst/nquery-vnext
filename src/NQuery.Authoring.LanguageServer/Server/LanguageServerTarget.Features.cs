@@ -34,13 +34,13 @@ internal sealed partial class LanguageServerTarget
 
         var text = document.Text;
         var view = DocumentView.Create(document, text.ToOffset(parameters.Position));
-        var model = document.Services.GetService<CompletionService>().GetModel(view, cancellationToken);
+        var result = document.Services.GetService<CompletionService>().GetResult(view, cancellationToken);
 
-        // The applicable span comes from the model rather than the client's word-boundary guess,
+        // The applicable span comes from the result rather than the client's word-boundary guess,
         // which is what makes bracketed identifiers ([Order Details]) replace correctly.
-        var range = text.ToRange(model.ApplicableSpan);
+        var range = text.ToRange(result.ApplicableSpan);
 
-        var items = model.Items.Select(item => ToCompletionItem(item, range)).ToArray();
+        var items = result.Items.Select(item => ToCompletionItem(item, range)).ToArray();
         return new CompletionList { IsIncomplete = false, Items = items };
     }
 
@@ -69,14 +69,14 @@ internal sealed partial class LanguageServerTarget
 
         var text = document.Text;
         var view = DocumentView.Create(document, text.ToOffset(parameters.Position));
-        var model = document.Services.GetService<QuickInfoService>().GetModel(view, cancellationToken);
-        if (model is null)
+        var result = document.Services.GetService<QuickInfoService>().GetResult(view, cancellationToken);
+        if (result is null)
             return null;
 
         return new Hover
         {
-            Contents = model.Markup.ToMarkupContent(),
-            Range = text.ToRange(model.Span)
+            Contents = result.Markup.ToMarkupContent(),
+            Range = text.ToRange(result.Span)
         };
     }
 
@@ -90,18 +90,18 @@ internal sealed partial class LanguageServerTarget
             return null;
 
         var view = DocumentView.Create(document, document.Text.ToOffset(parameters.Position));
-        var model = document.Services.GetService<SignatureHelpService>().GetModel(view, cancellationToken);
-        if (model is null)
+        var result = document.Services.GetService<SignatureHelpService>().GetResult(view, cancellationToken);
+        if (result is null)
             return null;
 
-        var signatures = model.Signatures.Select(ToSignatureInformation).ToArray();
-        var activeSignature = model.Signatures.IndexOf(model.Signature);
+        var signatures = result.Signatures.Select(ToSignatureInformation).ToArray();
+        var activeSignature = result.Signatures.IndexOf(result.Signature);
 
         return new LspSignatureHelp
         {
             Signatures = signatures,
             ActiveSignature = activeSignature < 0 ? 0 : activeSignature,
-            ActiveParameter = model.SelectedParameter
+            ActiveParameter = result.SelectedParameter
         };
     }
 

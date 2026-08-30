@@ -7,8 +7,8 @@ public class CommonTableExpressionCompletionProviderTests
 {
     private static void AssertIsMatch(string queryWithPosition)
     {
-        var completionModel = GetCompletionModel(queryWithPosition);
-        var item = completionModel.Items.Single();
+        var completionResult = GetCompletionResult(queryWithPosition);
+        var item = completionResult.Items.Single();
 
         Assert.Null(item.Glyph);
         Assert.Null(item.Description);
@@ -20,19 +20,19 @@ public class CommonTableExpressionCompletionProviderTests
 
     private static void AssertIsNoMatch(string queryWithPosition)
     {
-        var completionModel = GetCompletionModel(queryWithPosition);
+        var completionResult = GetCompletionResult(queryWithPosition);
 
-        Assert.Empty(completionModel.Items);
+        Assert.Empty(completionResult.Items);
     }
 
-    private static CompletionModel GetCompletionModel(string queryWithPosition)
+    private static CompletionResult GetCompletionResult(string queryWithPosition)
     {
         var query = queryWithPosition.ParseSinglePosition(out var position);
 
         var services = DocumentFactory.ServicesWithOnly<ICompletionProvider>(new CommonTableExpressionCompletionProvider());
         var document = DocumentFactory.CreateQuery(query, services);
 
-        return document.Services.GetService<CompletionService>().GetModel(DocumentView.Create(document, position));
+        return document.Services.GetService<CompletionService>().GetResult(DocumentView.Create(document, position));
     }
 
     [Fact]

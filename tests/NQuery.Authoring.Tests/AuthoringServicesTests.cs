@@ -46,9 +46,9 @@ public class AuthoringServicesTests
         typeof(ICompletionProvider),
         typeof(IHighlighter),
         typeof(IOutliner),
-        typeof(IQuickInfoModelProvider),
+        typeof(IQuickInfoProvider),
         typeof(ISelectionSpanProvider),
-        typeof(ISignatureHelpModelProvider)
+        typeof(ISignatureHelpProvider)
     ];
 
     [Fact]

@@ -4,8 +4,8 @@ public class EmptySymbolCompletionProviderTests : SymbolCompletionProviderTests
 {
     private static void AssertIsEmpty(string query)
     {
-        var completionModel = GetCompletionModel(query);
-        Assert.Empty(completionModel.Items);
+        var completionResult = GetCompletionResult(query);
+        Assert.Empty(completionResult.Items);
     }
 
     [Fact]

@@ -71,7 +71,7 @@ public sealed record CompletionItem
     public string? SortText { get; init; }
     public string? FilterText { get; init; }
 
-    // Always emitted with an explicit range (the CompletionModel's ApplicableSpan) rather than
+    // Always emitted with an explicit range (the CompletionResult's ApplicableSpan) rather than
     // relying on the client's word-boundary guess, which gets bracketed identifiers wrong.
     public TextEdit? TextEdit { get; init; }
 }

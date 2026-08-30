@@ -6,18 +6,18 @@ namespace NQuery.Authoring.Tests.Completion.Providers;
 
 public class TypeCompletionProviderTests
 {
-    private static CompletionModel GetCompletionModel(string queryWithJoinMarker)
+    private static CompletionResult GetCompletionResult(string queryWithJoinMarker)
     {
         var services = DocumentFactory.ServicesWithOnly<ICompletionProvider>(new TypeCompletionProvider());
         var document = DocumentFactory.CreateQuery(queryWithJoinMarker, out int position, services);
 
-        return document.Services.GetService<CompletionService>().GetModel(DocumentView.Create(document, position));
+        return document.Services.GetService<CompletionService>().GetResult(DocumentView.Create(document, position));
     }
 
     private static void AssertIsMatch(string query)
     {
-        var completionModel = GetCompletionModel(query);
-        var items = completionModel.Items.ToDictionary(i => i.InsertionText);
+        var completionResult = GetCompletionResult(query);
+        var items = completionResult.Items.ToDictionary(i => i.InsertionText);
         var typeNames = SyntaxFacts.GetTypeNames();
 
         foreach (var typeName in typeNames)
@@ -33,8 +33,8 @@ public class TypeCompletionProviderTests
 
     private static void AssertIsNotMatch(string query)
     {
-        var completionModel = GetCompletionModel(query);
-        var items = completionModel.Items.ToDictionary(i => i.InsertionText);
+        var completionResult = GetCompletionResult(query);
+        var items = completionResult.Items.ToDictionary(i => i.InsertionText);
         var typeNames = SyntaxFacts.GetTypeNames();
 
         var returnsAnyTypes = typeNames.Any(items.ContainsKey);

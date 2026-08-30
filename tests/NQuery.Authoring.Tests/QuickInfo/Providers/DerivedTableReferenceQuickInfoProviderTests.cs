@@ -1,0 +1,53 @@
+using NQuery.Authoring.QuickInfo;
+using NQuery.Authoring.QuickInfo.Providers;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Symbols;
+using NQuery.CodeAnalysis.Syntax;
+
+namespace NQuery.Authoring.Tests.QuickInfo.Providers;
+
+public class DerivedTableReferenceQuickInfoProviderTests : QuickInfoProviderTests
+{
+    protected override IQuickInfoProvider CreateProvider()
+    {
+        return new DerivedTableReferenceQuickInfoProvider();
+    }
+
+    protected override QuickInfoResult CreateExpectedResult(SemanticModel semanticModel)
+    {
+        var syntaxTree = semanticModel.SyntaxTree;
+        var syntax = syntaxTree.Root.DescendantNodes().OfType<DerivedTableReferenceSyntax>().Single();
+        var span = syntax.IdentifierToken.Span;
+        var symbol = semanticModel.GetDeclaredSymbol(syntax);
+        var markup = SymbolMarkup.ForSymbol(symbol!);
+        return new QuickInfoResult(semanticModel, span, Glyph.TableInstance, markup);
+    }
+
+    [Fact]
+    public void DerivedTableReferenceQuickInfoProvider_MatchesInName()
+    {
+        var query = """
+            SELECT  *
+            FROM    (
+                        SELECT  *
+                        FROM    Employees
+                    ) {emps}
+            """;
+
+        AssertIsMatch(query);
+    }
+
+    [Fact]
+    public void DerivedTableReferenceQuickInfoProvider_DoesNotMatchInParentheses()
+    {
+        var query = """
+            SELECT  *
+            FROM    {(
+                        SELECT  *
+                        FROM    Employees
+                    )} emps
+            """;
+
+        AssertIsNotMatch(query);
+    }
+}

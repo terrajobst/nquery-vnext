@@ -28,8 +28,8 @@ public class ColumnSymbolCompletionProviderTests : SymbolCompletionProviderTests
 
     private static void GetCompletionData(string query, string tableInstanceName, string columnName, out ColumnInstanceSymbol column, out CompletionItem columnItem, out SymbolMarkup columnMarkup)
     {
-        var completionModel = GetCompletionModel(query);
-        var semanticModel = completionModel.SemanticModel;
+        var completionResult = GetCompletionResult(query);
+        var semanticModel = completionResult.SemanticModel;
         var syntaxTree = semanticModel.SyntaxTree;
 
         var tableReference = syntaxTree.Root.DescendantNodesAndSelf()
@@ -38,7 +38,7 @@ public class ColumnSymbolCompletionProviderTests : SymbolCompletionProviderTests
             .Single(s => s is not null && s.Name == tableInstanceName);
 
         column = tableReference!.ColumnInstances.Single(c => c.Name == columnName);
-        columnItem = completionModel.Items.Single(i => i.InsertionText == columnName);
+        columnItem = completionResult.Items.Single(i => i.InsertionText == columnName);
         columnMarkup = SymbolMarkup.ForSymbol(column);
     }
 

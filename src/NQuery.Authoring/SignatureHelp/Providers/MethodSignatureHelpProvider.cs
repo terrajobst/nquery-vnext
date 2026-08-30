@@ -1,0 +1,33 @@
+using System.Collections.Immutable;
+
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Syntax;
+
+namespace NQuery.Authoring.SignatureHelp.Providers;
+
+internal sealed class MethodSignatureHelpProvider : SignatureHelpProvider<MethodInvocationExpressionSyntax>
+{
+    protected override SignatureHelpResult? GetResult(SemanticModel semanticModel, MethodInvocationExpressionSyntax node, int position)
+    {
+        // TODO: We need to use the resolved symbol as the selected one.
+
+        var targetType = semanticModel.GetExpressionType(node.Target);
+        if (targetType is null)
+            return null;
+
+        var name = node.IdentifierToken;
+        var signatures = semanticModel.LookupMethods(targetType)
+                                      .Where(m => name.Matches(m.Name))
+                                      .OrderBy(f => f.Parameters.Length)
+                                      .ToSignatureItems()
+                                      .ToImmutableArray();
+        if (signatures.Length == 0)
+            return null;
+
+        var span = node.Span;
+        var parameterIndex = node.ArgumentList.GetParameterIndex(position);
+        var selected = signatures.FirstOrDefault(s => s.Parameters.Length > parameterIndex);
+
+        return new SignatureHelpResult(span, signatures, selected!, parameterIndex);
+    }
+}

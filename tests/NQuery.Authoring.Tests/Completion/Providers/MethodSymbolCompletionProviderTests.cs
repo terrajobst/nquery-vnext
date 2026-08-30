@@ -6,14 +6,14 @@ public class MethodSymbolCompletionProviderTests : SymbolCompletionProviderTests
 {
     private static void AssertIsMatch(string query, Type type, string methodName)
     {
-        var completionModel = GetCompletionModel(query);
-        var semanticModel = completionModel.SemanticModel;
+        var completionResult = GetCompletionResult(query);
+        var semanticModel = completionResult.SemanticModel;
 
         var method = semanticModel.LookupMethods(type)
                                   .Where(m => m.Name == methodName)
                                   .OrderBy(m => m.Parameters.Length)
                                   .First();
-        var methodItem = completionModel.Items.Single(i => i.InsertionText == method.Name);
+        var methodItem = completionResult.Items.Single(i => i.InsertionText == method.Name);
         var methodMarkup = SymbolMarkup.ForSymbol(method);
 
         var overloadCount = semanticModel.LookupMethods(type)
@@ -29,8 +29,8 @@ public class MethodSymbolCompletionProviderTests : SymbolCompletionProviderTests
 
     private static void AssertIsNoMatch(string query)
     {
-        var completionModel = GetCompletionModel(query);
-        var hasTables = completionModel.Items.Any(i => i.Symbol is MethodSymbol || i.Glyph == Glyph.Method);
+        var completionResult = GetCompletionResult(query);
+        var hasTables = completionResult.Items.Any(i => i.Symbol is MethodSymbol || i.Glyph == Glyph.Method);
         Assert.False(hasTables);
     }
 

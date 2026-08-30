@@ -14,7 +14,7 @@ public sealed class CompletionService
         _providers = providers;
     }
 
-    public CompletionModel GetModel(DocumentView view, CancellationToken cancellationToken = default)
+    public CompletionResult GetResult(DocumentView view, CancellationToken cancellationToken = default)
     {
         ThrowIfNull(view);
 
@@ -28,7 +28,7 @@ public sealed class CompletionService
         var items = _providers.SelectMany(p => p.GetItems(view, cancellationToken));
         var sortedItems = items.OrderBy(c => c.DisplayText).ToImmutableArray();
 
-        return new CompletionModel(semanticModel, applicableSpan, sortedItems);
+        return new CompletionResult(semanticModel, applicableSpan, sortedItems);
     }
 
     private static SyntaxToken? GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)

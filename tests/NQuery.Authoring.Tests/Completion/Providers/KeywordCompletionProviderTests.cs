@@ -6,43 +6,43 @@ namespace NQuery.Authoring.Tests.Completion.Providers;
 
 public class KeywordCompletionProviderTests
 {
-    private static CompletionModel CreateCompletionModel(string query, int position)
+    private static CompletionResult CreateCompletionResult(string query, int position)
     {
         var services = DocumentFactory.ServicesWithOnly<ICompletionProvider>(new KeywordCompletionProvider());
         var document = DocumentFactory.CreateQuery(query, services);
 
-        return document.Services.GetService<CompletionService>().GetModel(DocumentView.Create(document, position));
+        return document.Services.GetService<CompletionService>().GetResult(DocumentView.Create(document, position));
     }
 
-    private static CompletionModel GetCompletionModel(string query)
+    private static CompletionResult GetCompletionResult(string query)
     {
         var actualQuery = query.ParseSinglePosition(out var position);
 
-        return CreateCompletionModel(actualQuery, position);
+        return CreateCompletionResult(actualQuery, position);
     }
 
-    private static CompletionModel GetCompletionModelWithFirstChar(string query, string keyword)
+    private static CompletionResult GetCompletionResultWithFirstChar(string query, string keyword)
     {
         var actualQuery = query.ParseSinglePosition(out var position);
 
         var modifiedQuery = actualQuery.Insert(position, keyword.Substring(0, 1));
         position++;
 
-        return CreateCompletionModel(modifiedQuery, position);
+        return CreateCompletionResult(modifiedQuery, position);
     }
 
     private static void AssertIsMatch(string query, string keyword)
     {
-        var completionModel = GetCompletionModel(query);
-        AssertIsMatch(completionModel, keyword);
+        var completionResult = GetCompletionResult(query);
+        AssertIsMatch(completionResult, keyword);
 
-        var completionModelWithFirstChar = GetCompletionModelWithFirstChar(query, keyword);
-        AssertIsMatch(completionModelWithFirstChar, keyword);
+        var completionResultWithFirstChar = GetCompletionResultWithFirstChar(query, keyword);
+        AssertIsMatch(completionResultWithFirstChar, keyword);
     }
 
-    private static void AssertIsMatch(CompletionModel completionModel, string keyword)
+    private static void AssertIsMatch(CompletionResult completionResult, string keyword)
     {
-        var item = completionModel.Items.Single(i => i.InsertionText == keyword);
+        var item = completionResult.Items.Single(i => i.InsertionText == keyword);
 
         Assert.Equal(Glyph.Keyword, item.Glyph);
         Assert.Equal(keyword, item.DisplayText);
@@ -52,8 +52,8 @@ public class KeywordCompletionProviderTests
 
     private static void AssertIsEmpty(string query)
     {
-        var completionModel = GetCompletionModel(query);
-        Assert.Empty(completionModel.Items);
+        var completionResult = GetCompletionResult(query);
+        Assert.Empty(completionResult.Items);
     }
 
     [Fact]

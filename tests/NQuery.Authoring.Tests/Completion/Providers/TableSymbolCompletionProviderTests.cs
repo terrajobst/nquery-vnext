@@ -6,11 +6,11 @@ public class TableSymbolCompletionProviderTests : SymbolCompletionProviderTests
 {
     private static void AssertIsMatch(string query, string tableName)
     {
-        var completionModel = GetCompletionModel(query);
-        var catalog = completionModel.SemanticModel.Compilation.Catalog;
+        var completionResult = GetCompletionResult(query);
+        var catalog = completionResult.SemanticModel.Compilation.Catalog;
 
         var definition = catalog.Tables.Single(t => t.Name == tableName);
-        var tableItem = completionModel.Items.Single(i => i.InsertionText == definition.Name);
+        var tableItem = completionResult.Items.Single(i => i.InsertionText == definition.Name);
         var table = Assert.IsAssignableFrom<TableSymbol>(tableItem.Symbol);
         Assert.Equal(TableKind.SchemaTable, table.TableKind);
         var tableMarkup = SymbolMarkup.ForSymbol(table);
@@ -23,15 +23,15 @@ public class TableSymbolCompletionProviderTests : SymbolCompletionProviderTests
 
     private static void AssertIsNoMatch(string query)
     {
-        var completionModel = GetCompletionModel(query);
-        var hasTables = completionModel.Items.Any(i => i.Symbol is TableSymbol || i.Glyph == Glyph.Table);
+        var completionResult = GetCompletionResult(query);
+        var hasTables = completionResult.Items.Any(i => i.Symbol is TableSymbol || i.Glyph == Glyph.Table);
         Assert.False(hasTables);
     }
 
     private static void AssertReturnsOnlyTables(string query)
     {
-        var completionModel = GetCompletionModel(query);
-        var hasNonTables = completionModel.Items.Any(i => i.Symbol is not TableSymbol || i.Glyph != Glyph.Table);
+        var completionResult = GetCompletionResult(query);
+        var hasNonTables = completionResult.Items.Any(i => i.Symbol is not TableSymbol || i.Glyph != Glyph.Table);
         Assert.False(hasNonTables);
     }
 

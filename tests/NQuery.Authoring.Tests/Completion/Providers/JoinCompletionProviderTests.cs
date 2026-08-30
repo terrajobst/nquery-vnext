@@ -15,9 +15,9 @@ public class JoinCompletionProviderTests
         var services = DocumentFactory.ServicesWithOnly<ICompletionProvider>(new JoinCompletionProvider());
         var document = DocumentFactory.CreateQuery(query, services);
 
-        var completionModel = document.Services.GetService<CompletionService>()
-                                      .GetModel(DocumentView.Create(document, position));
-        var item = completionModel.Items.Single(i => i.InsertionText == condition);
+        var completionResult = document.Services.GetService<CompletionService>()
+                                      .GetResult(DocumentView.Create(document, position));
+        var item = completionResult.Items.Single(i => i.InsertionText == condition);
 
         Assert.Equal(Glyph.Relation, item.Glyph);
         Assert.Equal(condition, item.Description);
