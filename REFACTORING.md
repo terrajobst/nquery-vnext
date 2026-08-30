@@ -282,19 +282,6 @@ structurally.
     - Should probably handle keyword casing
     - Should probably offer identifier normalization (brackets, quotes, always)
 * Are properties on the show plan used at all?
-* Make the obvious way to ask for diagnostics the correct one
-    - `SemanticModel.GetDiagnostics()` returns binding diagnostics only. A caller
-      that wants everything also has to call `SyntaxTree.GetDiagnostics()`, and
-      nothing in the API hints at that.
-    - `Compilation` already combines both, but `GetDiagnostics(BindingResult)` is
-      private, so the combined set isn't reachable from outside.
-    - This is a pit of failure, not just an inconvenience: the LSP server
-      reported no errors at all for an unterminated string literal, because that
-      document has a lexer diagnostic and no binding diagnostics. It went
-      unnoticed until a test happened to use a syntax-only invalid query.
-    - Either expose a public combined `Compilation.GetDiagnostics()`, or have
-      `SemanticModel.GetDiagnostics()` include the syntax diagnostics. The latter
-      matches what Roslyn does and is what callers evidently expect.
 * InstantiatedAggregateSymbol. Today it's conceptually an open generic. We don't
   have a symbol that captures the instantiated aggregate. We should consider
   adding one (and have it implement IInvocableSymbol) and have quick info show
