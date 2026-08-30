@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 using NQuery.CodeAnalysis.Binding;
 using NQuery.CodeAnalysis.Symbols;
 using NQuery.CodeAnalysis.Syntax;
@@ -222,9 +224,9 @@ public sealed class SemanticModel
     // Both syntactic and semantic, matching Roslyn: whoever holds a semantic model wants
     // everything wrong with the query, and a caller after parse errors alone already has
     // SyntaxTree.GetDiagnostics().
-    public IEnumerable<Diagnostic> GetDiagnostics()
+    public ImmutableArray<Diagnostic> GetDiagnostics()
     {
-        return SyntaxTree.GetDiagnostics().Concat(_bindingResult.Diagnostics);
+        return [.. SyntaxTree.GetDiagnostics(), .. _bindingResult.Diagnostics];
     }
 
     public IEnumerable<Symbol> LookupSymbols(int position)

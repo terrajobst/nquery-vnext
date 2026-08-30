@@ -35,6 +35,6 @@ public class OuterApplyTests
                                      .WithCatalog(NorthwindCatalog.Instance)
                                      .WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        return [.. semanticModel.GetDiagnostics()];
+        return semanticModel.GetDiagnostics();
     }
 }

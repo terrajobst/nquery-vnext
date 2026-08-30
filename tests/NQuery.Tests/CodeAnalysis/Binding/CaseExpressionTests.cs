@@ -13,7 +13,7 @@ public class CaseExpressionTests
         var syntaxTree = SyntaxTree.ParseExpression("CASE '1' WHEN 1.0 THEN 1 WHEN 2 THEN 2 END");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Equal(2, diagnostics.Length);
         Assert.Equal(DiagnosticId.CannotApplyBinaryOperator, diagnostics[0].DiagnosticId);
@@ -26,7 +26,7 @@ public class CaseExpressionTests
         var syntaxTree = SyntaxTree.ParseExpression("CASE 1 WHEN 1 THEN '1' WHEN 2 THEN 2.0 ELSE 3 END");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Equal(2, diagnostics.Length);
         Assert.Equal(DiagnosticId.CannotConvert, diagnostics[0].DiagnosticId);
@@ -39,7 +39,7 @@ public class CaseExpressionTests
         var syntaxTree = SyntaxTree.ParseExpression("CASE 1 WHEN 1 THEN 1 WHEN 2.0 THEN 2 END");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
 
@@ -53,7 +53,7 @@ public class CaseExpressionTests
         var syntaxTree = SyntaxTree.ParseExpression("CASE 1 WHEN 1 THEN 1 WHEN 2.0 THEN 2.0 END");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
 
@@ -67,7 +67,7 @@ public class CaseExpressionTests
         var syntaxTree = SyntaxTree.ParseExpression("CASE WHEN 1.0 = '1' THEN 1 WHEN TRUE = 2.0 THEN 2 END");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Equal(2, diagnostics.Length);
         Assert.Equal(DiagnosticId.CannotApplyBinaryOperator, diagnostics[0].DiagnosticId);
@@ -80,7 +80,7 @@ public class CaseExpressionTests
         var syntaxTree = SyntaxTree.ParseExpression("CASE WHEN 1 = 1 THEN '1' WHEN 2 = 2 THEN 2.0 ELSE 3 END");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Equal(2, diagnostics.Length);
         Assert.Equal(DiagnosticId.CannotConvert, diagnostics[0].DiagnosticId);
@@ -93,7 +93,7 @@ public class CaseExpressionTests
         var syntaxTree = SyntaxTree.ParseExpression("CASE WHEN 1 = 1.0 THEN 1 WHEN 2.0 = 2 THEN 2 END");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
 
@@ -107,7 +107,7 @@ public class CaseExpressionTests
         var syntaxTree = SyntaxTree.ParseExpression("CASE WHEN 1 = 1 THEN 1 WHEN 2 = 2 THEN 2.0 END");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
 
@@ -124,7 +124,7 @@ public class CaseExpressionTests
         var syntaxTree = SyntaxTree.ParseExpression("CASE WHEN 1 = 1 THEN NULL ELSE 2 END");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
 

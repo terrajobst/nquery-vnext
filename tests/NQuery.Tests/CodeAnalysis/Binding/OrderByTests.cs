@@ -13,7 +13,7 @@ public class OrderByTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Id, t.Name FROM Table t ORDER BY 0, 3");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Equal(2, diagnostics.Length);
         Assert.Equal(DiagnosticId.OrderByColumnPositionIsOutOfRange, diagnostics[0].DiagnosticId);
@@ -26,7 +26,7 @@ public class OrderByTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Id, t.Name FROM Table t ORDER BY 1, 2");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
         var selectColumns = syntaxTree.Root.DescendantNodes()
                                       .OfType<ExpressionSelectColumnSyntax>()
                                       .Select(semanticModel.GetDeclaredSymbol)
@@ -56,7 +56,7 @@ public class OrderByTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root!;
         var unionQuery = (UnionQuerySyntax)orderedQuery.Query;
@@ -77,7 +77,7 @@ public class OrderByTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Id AS Name, t.Name AS Id FROM Table t ORDER BY Name");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
         var selectColumn = syntaxTree.Root.DescendantNodes()
                                      .OfType<ExpressionSelectColumnSyntax>()
                                      .Select(semanticModel.GetDeclaredSymbol)
@@ -112,7 +112,7 @@ public class OrderByTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root!;
         var unionQuery = (UnionQuerySyntax)orderedQuery.Query;
@@ -133,7 +133,7 @@ public class OrderByTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Id + t.Name FROM Table t ORDER BY t.Id + t.Name");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
         var selectColumn = syntaxTree.Root.DescendantNodes()
                                      .OfType<ExpressionSelectColumnSyntax>()
                                      .Select(semanticModel.GetDeclaredSymbol)
@@ -163,7 +163,7 @@ public class OrderByTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root!;
         var unionQuery = (UnionQuerySyntax)orderedQuery.Query;
@@ -201,7 +201,7 @@ public class OrderByTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root!;
         var exceptQuery = (ExceptQuerySyntax)orderedQuery.Query;
@@ -224,7 +224,7 @@ public class OrderByTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Id, t.Name FROM Table t ORDER BY t.Id + t.Name");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
         var orderByColumn = syntaxTree.Root.DescendantNodes()
                                       .OfType<OrderByColumnSyntax>()
                                       .Select(semanticModel.GetSymbol)
@@ -240,7 +240,7 @@ public class OrderByTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Name AS Foo FROM Table t ORDER BY LEN(Foo)");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
@@ -262,7 +262,7 @@ public class OrderByTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.OrderByItemsMustBeInSelectListIfUnionSpecified, diagnostics[0].DiagnosticId);

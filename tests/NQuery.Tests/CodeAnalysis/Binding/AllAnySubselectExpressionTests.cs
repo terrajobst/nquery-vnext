@@ -14,7 +14,7 @@ public sealed class AllAnySubselectExpressionTests
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
 
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
@@ -27,7 +27,7 @@ public sealed class AllAnySubselectExpressionTests
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
 
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
@@ -50,7 +50,7 @@ public sealed class AllAnySubselectExpressionTests
         var expression = (ExpressionSyntax)compilation.SyntaxTree.Root.Root!;
         var semanticModel = compilation.GetSemanticModel();
         var resultType = semanticModel.GetExpressionType(expression);
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Equal(typeof(bool), resultType);
         Assert.Empty(diagnostics);
@@ -63,7 +63,7 @@ public sealed class AllAnySubselectExpressionTests
         var expression = (ExpressionSyntax)compilation.SyntaxTree.Root.Root!;
         var semanticModel = compilation.GetSemanticModel();
         var resultType = semanticModel.GetExpressionType(expression);
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Equal(typeof(bool), resultType);
         Assert.Empty(diagnostics);

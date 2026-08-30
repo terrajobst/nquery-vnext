@@ -15,7 +15,7 @@ public class NameExpressionTests
             .WithSyntaxTree(syntaxTree);
 
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.InvocationRequiresParenthesis, diagnostics[0].DiagnosticId);
@@ -30,7 +30,7 @@ public class NameExpressionTests
             .WithSyntaxTree(syntaxTree);
 
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.InvocationRequiresParenthesis, diagnostics[0].DiagnosticId);

@@ -13,7 +13,7 @@ public class ComparerTests
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.InvalidDataTypeInSelectDistinct, diagnostics[0].DiagnosticId);
@@ -26,7 +26,7 @@ public class ComparerTests
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Empty(diagnostics);
     }
@@ -38,7 +38,7 @@ public class ComparerTests
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.InvalidDataTypeInGroupBy, diagnostics[0].DiagnosticId);
@@ -51,7 +51,7 @@ public class ComparerTests
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.InvalidDataTypeInOrderBy, diagnostics[0].DiagnosticId);
@@ -69,7 +69,7 @@ public class ComparerTests
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.InvalidDataTypeInUnion, diagnostics[0].DiagnosticId);
@@ -87,7 +87,7 @@ public class ComparerTests
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Empty(diagnostics);
     }
@@ -104,7 +104,7 @@ public class ComparerTests
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.InvalidDataTypeInExcept, diagnostics[0].DiagnosticId);
@@ -122,7 +122,7 @@ public class ComparerTests
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.InvalidDataTypeInIntersect, diagnostics[0].DiagnosticId);

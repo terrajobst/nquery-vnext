@@ -13,7 +13,7 @@ public class SelectStarTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT *");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.MustSpecifyTableToSelectFrom, diagnostics[0].DiagnosticId);
@@ -25,7 +25,7 @@ public class SelectStarTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT 'Test' WHERE EXISTS (SELECT *)");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Empty(diagnostics);
     }
@@ -44,7 +44,7 @@ public class SelectStarTests
                                        .OfType<NamedTableReferenceSyntax>()
                                        .Single();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var tableReferenceSymbol = semanticModel.GetDeclaredSymbol(tableInstance)!;
         var selectStarSymbol = semanticModel.GetTableInstance(selectStar);
@@ -63,7 +63,7 @@ public class SelectStarTests
                                     .OfType<WildcardSelectColumnSyntax>()
                                     .Single();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var selectStarSymbol = semanticModel.GetTableInstance(selectStar);
 
@@ -85,7 +85,7 @@ public class SelectStarTests
                                        .OfType<NamedTableReferenceSyntax>()
                                        .Single();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var tableSymbols = semanticModel.GetDeclaredSymbol(tableInstance)!.ColumnInstances;
         var selectStartSymbols = semanticModel.GetColumnInstances(selectStar).ToImmutableArray();
@@ -108,7 +108,7 @@ public class SelectStarTests
                                        .OfType<NamedTableReferenceSyntax>()
                                        .Single();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var tableColumnNames = semanticModel.GetDeclaredSymbol(tableInstance)!
                                             .ColumnInstances
@@ -136,7 +136,7 @@ public class SelectStarTests
                                        .OfType<DerivedTableReferenceSyntax>()
                                        .Single();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var tableColumnNames = semanticModel.GetDeclaredSymbol(tableInstance)!
                                             .ColumnInstances

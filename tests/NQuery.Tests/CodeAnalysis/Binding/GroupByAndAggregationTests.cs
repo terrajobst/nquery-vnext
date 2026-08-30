@@ -12,7 +12,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(COUNT(*)) FROM Table");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.AggregateCannotContainAggregate, diagnostics[0].DiagnosticId);
@@ -24,7 +24,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT 1 FROM Table WHERE COUNT(*) > 0");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.AggregateInWhere, diagnostics[0].DiagnosticId);
@@ -36,7 +36,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT 1 FROM Table GROUP BY COUNT(*)");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.AggregateInGroupBy, diagnostics[0].DiagnosticId);
@@ -48,7 +48,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT 1 FROM Table t1 INNER JOIN Table t2 ON t1.Id = COUNT(*)");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.AggregateInOn, diagnostics[0].DiagnosticId);
@@ -60,7 +60,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT 1 FROM Table GROUP BY (SELECT 1)");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.GroupByCannotContainSubquery, diagnostics[0].DiagnosticId);
@@ -72,7 +72,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT((SELECT NULL)) FROM Table");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.AggregateCannotContainSubquery, diagnostics[0].DiagnosticId);
@@ -91,7 +91,7 @@ public class GroupByAndAggregationTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.AggregateContainsColumnsFromDifferentQueries, diagnostics[0].DiagnosticId);
@@ -103,7 +103,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Id FROM Table t GROUP BY t.Name");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.SelectExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
@@ -119,7 +119,7 @@ public class GroupByAndAggregationTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Empty(diagnostics);
     }
@@ -134,7 +134,7 @@ public class GroupByAndAggregationTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Empty(diagnostics);
     }
@@ -145,7 +145,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT *, COUNT(*) FROM Table t");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Equal(2, diagnostics.Length);
         Assert.Equal(DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
@@ -158,7 +158,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT * FROM Table t GROUP BY t.Id");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.SelectExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
@@ -170,7 +170,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT * FROM Table t GROUP BY t.Id, t.Name");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Empty(diagnostics);
     }
@@ -181,7 +181,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Name, COUNT(*) FROM Table t");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
@@ -193,7 +193,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Name, COUNT(t.Id) FROM Table t");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
@@ -212,7 +212,7 @@ public class GroupByAndAggregationTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Empty(diagnostics);
     }
@@ -223,7 +223,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT 1 FROM Table t GROUP BY t.Name HAVING t.Id <> 1");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.HavingExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
@@ -240,7 +240,7 @@ public class GroupByAndAggregationTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Empty(diagnostics);
     }
@@ -256,7 +256,7 @@ public class GroupByAndAggregationTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Empty(diagnostics);
     }
@@ -267,7 +267,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*) FROM Table t HAVING t.Name <> 'test'");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.HavingExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
@@ -279,7 +279,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(t.Id) FROM Table t HAVING t.Name <> 'test'");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.HavingExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
@@ -291,7 +291,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT 1 FROM Table t GROUP BY t.Name ORDER BY t.Id");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.OrderByExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
@@ -308,7 +308,7 @@ public class GroupByAndAggregationTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Empty(diagnostics);
     }
@@ -324,7 +324,7 @@ public class GroupByAndAggregationTests
             """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Empty(diagnostics);
     }
@@ -335,7 +335,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*) FROM Table t ORDER BY t.Name");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.OrderByExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
@@ -347,7 +347,7 @@ public class GroupByAndAggregationTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(t.Id) FROM Table t ORDER BY t.Name");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.OrderByExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);

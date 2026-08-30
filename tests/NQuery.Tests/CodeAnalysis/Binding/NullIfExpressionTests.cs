@@ -13,7 +13,7 @@ public class NullIfExpressionTests
         var syntaxTree = SyntaxTree.ParseExpression("NULLIF(1, '2')");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.CannotConvert, diagnostics[0].DiagnosticId);
@@ -25,7 +25,7 @@ public class NullIfExpressionTests
         var syntaxTree = SyntaxTree.ParseExpression("NULLIF(1, 3.0)");
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
 

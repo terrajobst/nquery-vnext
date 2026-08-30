@@ -15,7 +15,7 @@ public sealed class CastExpressionTests
         var semanticModel = compilation.GetSemanticModel();
 
         var returnType = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Equal(typeof(string), returnType);
         Assert.Single(diagnostics);
@@ -29,7 +29,7 @@ public sealed class CastExpressionTests
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
 
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.UndeclaredType, diagnostics[0].DiagnosticId);

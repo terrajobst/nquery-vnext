@@ -15,7 +15,7 @@ public sealed class PropertyAccessExpressionTests
             .WithSyntaxTree(syntaxTree);
 
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.InvocationRequiresParenthesis, diagnostics[0].DiagnosticId);
@@ -28,7 +28,7 @@ public sealed class PropertyAccessExpressionTests
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
 
-        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);

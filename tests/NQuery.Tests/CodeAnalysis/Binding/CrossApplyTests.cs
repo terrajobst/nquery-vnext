@@ -56,6 +56,6 @@ public class CrossApplyTests
                                      .WithCatalog(NorthwindCatalog.Instance)
                                      .WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        return [.. semanticModel.GetDiagnostics()];
+        return semanticModel.GetDiagnostics();
     }
 }
