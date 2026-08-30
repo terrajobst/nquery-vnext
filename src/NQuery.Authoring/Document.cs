@@ -14,9 +14,10 @@ namespace NQuery.Authoring;
 // Get computes in place, GetAsync offloads, TryGet answers only if the value is already cached.
 // All three yield the same instance; see AsyncLazy for why that matters.
 //
-// There is deliberately no Workspace back-reference. A document is a snapshot and a workspace
-// mutates, so reaching from one to the other would observe state that has already moved on -- and
-// documents exist without a workspace at all.
+// There is deliberately no back-reference to whatever mutable state a host keeps alongside a
+// document. A document is a snapshot and that state moves on, so reaching from one to the other
+// would observe a version that no longer matches -- and documents exist without any such state at
+// all.
 public sealed class Document
 {
     private readonly AsyncLazy<SyntaxTree> _syntaxTree;

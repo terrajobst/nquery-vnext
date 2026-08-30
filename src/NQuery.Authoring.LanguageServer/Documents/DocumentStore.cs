@@ -15,8 +15,7 @@ internal sealed class DocumentStore
     private readonly Dictionary<Uri, OpenDocument> _documents = new();
     private readonly object _gate = new();
 
-    // Built once per server and shared by every open document: a workspace is per file, while the
-    // service composition is per process.
+    // Built once per server and shared by every open document: the composition is per process.
     private readonly AuthoringServices _services;
 
     private Catalog _catalog = Catalog.Empty;
@@ -87,7 +86,7 @@ internal sealed class DocumentStore
                 return false;
             }
 
-            snapshot = new DocumentSnapshot(uri, document.Version, document.Workspace.CurrentDocument);
+            snapshot = new DocumentSnapshot(uri, document.Version, document.GetDocument());
             return true;
         }
     }
@@ -99,7 +98,7 @@ internal sealed class DocumentStore
             var builder = ImmutableArray.CreateBuilder<DocumentSnapshot>(_documents.Count);
 
             foreach (var document in _documents.Values)
-                builder.Add(new DocumentSnapshot(document.Uri, document.Version, document.Workspace.CurrentDocument));
+                builder.Add(new DocumentSnapshot(document.Uri, document.Version, document.GetDocument()));
 
             return builder.MoveToImmutable();
         }
@@ -119,8 +118,8 @@ internal sealed class DocumentStore
 
             foreach (var document in _documents.Values)
             {
-                document.Workspace.Catalog = catalog;
-                builder.Add(new DocumentSnapshot(document.Uri, document.Version, document.Workspace.CurrentDocument));
+                document.SetCatalog(catalog);
+                builder.Add(new DocumentSnapshot(document.Uri, document.Version, document.GetDocument()));
             }
 
             return builder.MoveToImmutable();

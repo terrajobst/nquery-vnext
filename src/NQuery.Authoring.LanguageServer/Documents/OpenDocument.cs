@@ -2,8 +2,15 @@ using NQuery.Authoring.LanguageServer.Text;
 
 namespace NQuery.Authoring.LanguageServer.Documents;
 
+// The mutable state the server keeps around one open file: the text container the client writes
+// into, and the last Document snapshot taken from it.
+//
+// Not thread-safe by design -- every member is called under DocumentStore's lock, which is also
+// what serializes the text changes this reads.
 internal sealed class OpenDocument
 {
+    private Document _document;
+
     public OpenDocument(Uri uri, string languageId, int version, string text, DocumentKind kind, Catalog catalog, AuthoringServices services)
     {
         ThrowIfNull(uri);
@@ -16,8 +23,7 @@ internal sealed class OpenDocument
         LanguageId = languageId;
         Version = version;
         Container = new LspSourceTextContainer(text);
-        Workspace = Workspace.Create(Container, kind, services);
-        Workspace.Catalog = catalog;
+        _document = Document.Create(kind, Container.Current, catalog, services);
     }
 
     public Uri Uri { get; }
@@ -28,5 +34,20 @@ internal sealed class OpenDocument
 
     public LspSourceTextContainer Container { get; }
 
-    public Workspace Workspace { get; }
+    // A method rather than a property because it isn't a read: changes land on the container, and
+    // the document is only brought forward when someone actually needs a snapshot.
+    public Document GetDocument()
+    {
+        if (_document.Text != Container.Current)
+            _document = _document.WithText(Container.Current);
+
+        return _document;
+    }
+
+    public void SetCatalog(Catalog catalog)
+    {
+        ThrowIfNull(catalog);
+
+        _document = GetDocument().WithCatalog(catalog);
+    }
 }
