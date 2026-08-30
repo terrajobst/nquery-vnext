@@ -43,6 +43,14 @@ public sealed class AuthoringServices
                                       .ToFrozenDictionary(g => g.Key, g => g.ToImmutableArray());
     }
 
+    // The built-in feature set, for a host that wants it and nothing else. This doesn't make the
+    // defaults implicit -- the builder still starts empty, so Create(_ => { }) still hands back
+    // nothing -- it just spares the common case from spelling out the configure callback.
+    public static AuthoringServices Create()
+    {
+        return Create(b => b.AddDefaultServices());
+    }
+
     public static AuthoringServices Create(Action<AuthoringServicesBuilder> configure)
     {
         ThrowIfNull(configure);

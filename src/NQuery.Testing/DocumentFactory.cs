@@ -10,7 +10,7 @@ public static class DocumentFactory
 {
     private static readonly Catalog Catalog = NorthwindCatalog.Instance;
 
-    public static AuthoringServices DefaultServices { get; } = AuthoringServices.Create(b => b.AddDefaultServices());
+    public static AuthoringServices DefaultServices { get; } = AuthoringServices.Create();
 
     // The default composition with one extension point narrowed to the implementation under test,
     // which is how a per-provider test isolates its subject now that services own their providers.

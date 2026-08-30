@@ -54,7 +54,7 @@ public class AuthoringServicesTests
     [Fact]
     public void AuthoringServices_AddDefaultServices_RegistersEveryService()
     {
-        var services = AuthoringServices.Create(b => b.AddDefaultServices());
+        var services = AuthoringServices.Create();
         var resolve = typeof(AuthoringServices).GetMethod(nameof(AuthoringServices.GetService))!;
 
         foreach (var serviceType in AllServiceTypes)
@@ -136,7 +136,7 @@ public class AuthoringServicesTests
     [Fact]
     public void AuthoringServices_GetService_ReturnsSameInstance()
     {
-        var services = AuthoringServices.Create(b => b.AddDefaultServices());
+        var services = AuthoringServices.Create();
 
         Assert.Same(services.GetService<CompletionService>(), services.GetService<CompletionService>());
     }
@@ -249,7 +249,7 @@ public class AuthoringServicesTests
     [Fact]
     public void AuthoringServices_Document_CarriesServices()
     {
-        var services = AuthoringServices.Create(b => b.AddDefaultServices());
+        var services = AuthoringServices.Create();
         var document = DocumentFactory.CreateQuery(@"SELECT 1", services);
 
         Assert.Same(services, document.Services);

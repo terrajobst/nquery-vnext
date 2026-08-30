@@ -11,7 +11,7 @@ public sealed class NQueryLanguageServerOptions
     // The language services every document in this server is analyzed with. A host that ships its
     // own providers builds its own composition; everything else here is server policy, which is
     // deliberately not part of the service set.
-    public AuthoringServices Services { get; set; } = AuthoringServices.Create(b => b.AddDefaultServices());
+    public AuthoringServices Services { get; set; } = AuthoringServices.Create();
 
     public string ServerName { get; set; } = @"NQuery Language Server";
 
