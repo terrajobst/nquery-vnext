@@ -266,10 +266,33 @@ structurally.
 * Use benchmarks to compare old vs new engine
 * Use benchmarks to optimize the engine further (e.g. row buffer copies, boxing,
   slot representation)
-* Providers receive a `CancellationToken` but only the base classes act on it,
-  by passing it to `GetSemanticModel`. Nothing checks it between providers, so a
-  fan-out over fifteen quick info providers still runs to completion after
-  cancellation. Cheap to fix in the services' loops.
+* The `CancellationToken` is threaded everywhere and honored nowhere. Services
+  take one, providers now take one, and the provider base classes forward it to
+  `GetSemanticModel`/`GetSyntaxTree` — but that accomplishes nothing, because
+  `src/NQuery` contains no `CancellationToken` at all. `Document`'s three lazies
+  drop it: the syntax tree factory discards it outright, and the other two only
+  pass it sideways into another `AsyncLazy` before calling `Compilation.Create`
+  and `Compilation.GetSemanticModel()`, neither of which takes a token.
+  `AsyncLazy.GetValue` never checks it either. The single real observation point
+  is `GetValueAsync` handing it to `Task.Run`, which cancels the work before it
+  starts but never once it is running.
+    - **Cheap half:** check the token in the services that fan out over every
+      provider — highlighting, code issues, code fixes, code refactorings (10
+      providers), completion and signature help (both sort, so they enumerate
+      everything), and outlining. Quick info and brace matching already
+      short-circuit on the first result and don't need it. This only lets a
+      superseded request stop *between* providers, each of which is a syntax
+      walk over an already-bound tree, so the win is modest.
+    - **The half that matters:** parse and bind are where the time goes and are
+      currently uninterruptible. Fixing that means threading a token through
+      `src/NQuery`, and interacts with `AsyncLazy`: the lock is held across the
+      factory, so a cancelled factory leaves `_value` null and the next caller
+      recomputes cleanly — correct, but cancellation costs the work already
+      done. `GetValue` should also check the token before taking the lock, so a
+      caller doesn't block on someone else's in-flight bind only to discover its
+      own request is dead.
+    - Not costing anything measurable at query-sized documents today, which is
+      why this is a bullet rather than a bug.
 * TypeSymbol
     - Support type aliases
     - Host methods and properties on TypeSymbol, lazily loaded.
