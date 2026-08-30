@@ -72,7 +72,7 @@ public sealed class NorthwindHostProcessTests
         private readonly Process _process;
         private readonly JsonRpc _client;
         private readonly Dictionary<Uri, TaskCompletionSource<IReadOnlyList<LspDiagnostic>>> _waiters = new();
-        private readonly object _gate = new();
+        private readonly Lock _gate = new();
 
         private NorthwindHost(Process process, JsonRpc client)
         {

@@ -14,7 +14,7 @@ namespace NQuery.Authoring.LanguageServer.Server;
 internal sealed partial class LanguageServerTarget
 {
     private readonly Dictionary<Uri, CancellationTokenSource> _pendingDiagnostics = new();
-    private readonly object _diagnosticsGate = new();
+    private readonly Lock _diagnosticsGate = new();
 
     [JsonRpcMethod(Methods.TextDocumentDidOpen, UseSingleObjectParameterDeserialization = true)]
     public void DidOpen(DidOpenTextDocumentParams parameters)

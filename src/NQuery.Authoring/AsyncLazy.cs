@@ -17,7 +17,7 @@ internal sealed class AsyncLazy<T>
     where T : class
 {
     private readonly Func<CancellationToken, T> _valueFactory;
-    private readonly object _gate = new();
+    private readonly Lock _gate = new();
 
     private T? _value;
 

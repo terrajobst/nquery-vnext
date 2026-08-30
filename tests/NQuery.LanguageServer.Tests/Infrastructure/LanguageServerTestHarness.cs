@@ -164,7 +164,7 @@ internal sealed class LanguageServerTestHarness : IAsyncDisposable
         private readonly Dictionary<Uri, TaskCompletionSource<IReadOnlyList<LspDiagnostic>>> _waiters = new();
         private readonly List<ShowMessageParams> _shownMessages = new();
         private readonly List<TaskCompletionSource<ShowMessageParams>> _messageWaiters = new();
-        private readonly object _gate = new();
+        private readonly Lock _gate = new();
 
         public IReadOnlyList<ShowMessageParams> ShownMessages
         {

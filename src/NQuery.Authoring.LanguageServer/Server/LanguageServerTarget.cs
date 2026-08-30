@@ -16,7 +16,7 @@ internal sealed partial class LanguageServerTarget : ILanguageServerHost
     private readonly NQueryLanguageServerOptions _options;
     private readonly DocumentStore _documents;
     private readonly TaskCompletionSource _exited = new(TaskCreationOptions.RunContinuationsAsynchronously);
-    private readonly object _catalogGate = new();
+    private readonly Lock _catalogGate = new();
 
     private JsonRpc? _rpc;
     private ProjectContext? _project;

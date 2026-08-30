@@ -13,7 +13,7 @@ namespace NQuery.Authoring.LanguageServer.Documents;
 internal sealed class DocumentStore
 {
     private readonly Dictionary<Uri, OpenDocument> _documents = new();
-    private readonly object _gate = new();
+    private readonly Lock _gate = new();
 
     // Built once per server and shared by every open document: the composition is per process.
     private readonly AuthoringServices _services;
