@@ -5,12 +5,12 @@ namespace NQuery.Authoring.CodeActions;
 public abstract class CodeIssueProvider<T> : ICodeIssueProvider
     where T : SyntaxNode
 {
-    public IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel)
+    public IEnumerable<CodeIssue> GetIssues(Document document, CancellationToken cancellationToken)
     {
-        ThrowIfNull(semanticModel);
+        ThrowIfNull(document);
 
-        var syntaxTree = semanticModel.SyntaxTree;
-        var nodes = syntaxTree.Root.DescendantNodes().OfType<T>();
+        var semanticModel = document.GetSemanticModel(cancellationToken);
+        var nodes = semanticModel.SyntaxTree.Root.DescendantNodes().OfType<T>();
         return nodes.SelectMany(node => GetIssues(semanticModel, node));
     }
 

@@ -15,10 +15,8 @@ public sealed class QuickInfoService
     {
         ThrowIfNull(view);
 
-        var semanticModel = view.Document.GetSemanticModel(cancellationToken);
-
         return (from p in _providers
-                let m = p.GetModel(semanticModel, view.Position)
+                let m = p.GetModel(view, cancellationToken)
                 where m is not null
                 select m).FirstOrDefault();
     }

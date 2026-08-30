@@ -22,10 +22,9 @@ public sealed class SymbolSearchService
         return [.. FindUsages(document.GetSemanticModel(cancellationToken), symbol)];
     }
 
-    // What the document-shaped entry points above are defined in terms of, and what a caller that
-    // already holds a semantic model -- SymbolReferenceHighlighter -- uses directly, so that "what
-    // counts as a reference to this symbol" is defined exactly once.
-    internal SymbolSpan? FindSymbol(SemanticModel semanticModel, int position)
+    // What both entry points above are defined in terms of, so that "what counts as a reference to
+    // this symbol" is defined exactly once.
+    private static SymbolSpan? FindSymbol(SemanticModel semanticModel, int position)
     {
         return semanticModel.SyntaxTree.Root.FindNodes(position)
                             .SelectMany(n => GetSymbolSpans(semanticModel, n))
@@ -33,7 +32,7 @@ public sealed class SymbolSearchService
                             .Select(s => s).Cast<SymbolSpan?>().FirstOrDefault();
     }
 
-    internal IEnumerable<SymbolSpan> FindUsages(SemanticModel semanticModel, Symbol symbol)
+    private static IEnumerable<SymbolSpan> FindUsages(SemanticModel semanticModel, Symbol symbol)
     {
         return from n in semanticModel.SyntaxTree.Root.DescendantNodes()
                from s in GetSymbolSpans(semanticModel, n)

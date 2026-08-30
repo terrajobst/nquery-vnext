@@ -6,9 +6,12 @@ public abstract class CodeFixProvider : ICodeFixProvider
 {
     public abstract IEnumerable<DiagnosticId> GetFixableDiagnosticIds();
 
-    public IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position)
+    public IEnumerable<ICodeAction> GetFixes(DocumentView view, CancellationToken cancellationToken)
     {
-        ThrowIfNull(semanticModel);
+        ThrowIfNull(view);
+
+        var semanticModel = view.Document.GetSemanticModel(cancellationToken);
+        var position = view.Position;
 
         var syntaxDiagnostics = semanticModel.SyntaxTree.GetDiagnostics();
         var semanticDiagnostics = semanticModel.GetDiagnostics();

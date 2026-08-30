@@ -5,12 +5,14 @@ namespace NQuery.Authoring.Completion;
 public abstract class CompletionProvider<T> : ICompletionProvider
     where T : SyntaxNode
 {
-    public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
+    public IEnumerable<CompletionItem> GetItems(DocumentView view, CancellationToken cancellationToken)
     {
-        ThrowIfNull(semanticModel);
+        ThrowIfNull(view);
 
-        var syntaxTree = semanticModel.SyntaxTree;
-        var token = syntaxTree.Root.FindTokenOnLeft(position);
+        var semanticModel = view.Document.GetSemanticModel(cancellationToken);
+        var position = view.Position;
+
+        var token = semanticModel.SyntaxTree.Root.FindTokenOnLeft(position);
         var node = token.Parent!.AncestorsAndSelf()
                                .OfType<T>()
                                .FirstOrDefault();

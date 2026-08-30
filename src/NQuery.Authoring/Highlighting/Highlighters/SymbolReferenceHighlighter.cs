@@ -1,5 +1,4 @@
 using NQuery.Authoring.SymbolSearch;
-using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Highlighting.Highlighters;
@@ -13,15 +12,15 @@ internal sealed class SymbolReferenceHighlighter : IHighlighter
         _symbolSearch = symbolSearch;
     }
 
-    public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
+    public IEnumerable<TextSpan> GetHighlights(DocumentView view, CancellationToken cancellationToken)
     {
-        ThrowIfNull(semanticModel);
+        ThrowIfNull(view);
 
-        var symbolAtPosition = _symbolSearch.FindSymbol(semanticModel, position);
+        var symbolAtPosition = _symbolSearch.FindSymbol(view, cancellationToken);
         if (symbolAtPosition is null)
             return [];
 
-        return _symbolSearch.FindUsages(semanticModel, symbolAtPosition.Value.Symbol)
+        return _symbolSearch.FindUsages(view.Document, symbolAtPosition.Value.Symbol, cancellationToken)
                             .Select(s => s.Span);
     }
 }

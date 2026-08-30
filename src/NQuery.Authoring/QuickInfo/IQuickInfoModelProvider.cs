@@ -1,8 +1,6 @@
-using NQuery.CodeAnalysis;
-
 namespace NQuery.Authoring.QuickInfo;
 
 public interface IQuickInfoModelProvider
 {
-    QuickInfoModel? GetModel(SemanticModel semanticModel, int position);
+    QuickInfoModel? GetModel(DocumentView view, CancellationToken cancellationToken);
 }

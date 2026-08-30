@@ -25,7 +25,7 @@ public sealed class CompletionService
         var token = GetIdentifierOrKeywordAtPosition(syntaxTree.Root, position);
         var applicableSpan = token?.Span ?? new TextSpan(position, 0);
 
-        var items = _providers.SelectMany(p => p.GetItems(semanticModel, position));
+        var items = _providers.SelectMany(p => p.GetItems(view, cancellationToken));
         var sortedItems = items.OrderBy(c => c.DisplayText).ToImmutableArray();
 
         return new CompletionModel(semanticModel, applicableSpan, sortedItems);

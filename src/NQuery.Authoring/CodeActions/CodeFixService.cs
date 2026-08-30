@@ -15,7 +15,6 @@ public sealed class CodeFixService
     {
         ThrowIfNull(view);
 
-        var semanticModel = view.Document.GetSemanticModel(cancellationToken);
-        return [.. _providers.SelectMany(p => p.GetFixes(semanticModel, view.Position))];
+        return [.. _providers.SelectMany(p => p.GetFixes(view, cancellationToken))];
     }
 }

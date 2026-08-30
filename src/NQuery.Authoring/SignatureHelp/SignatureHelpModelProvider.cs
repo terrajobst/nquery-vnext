@@ -5,10 +5,14 @@ namespace NQuery.Authoring.SignatureHelp;
 public abstract class SignatureHelpModelProvider<T> : ISignatureHelpModelProvider
     where T : SyntaxNode
 {
-    public SignatureHelpModel? GetModel(SemanticModel semanticModel, int position)
+    public SignatureHelpModel? GetModel(DocumentView view, CancellationToken cancellationToken)
     {
-        var syntaxTree = semanticModel.SyntaxTree;
-        var token = syntaxTree.Root.FindTokenOnLeft(position);
+        ThrowIfNull(view);
+
+        var semanticModel = view.Document.GetSemanticModel(cancellationToken);
+        var position = view.Position;
+
+        var token = semanticModel.SyntaxTree.Root.FindTokenOnLeft(position);
         var node = token.Parent?
                         .AncestorsAndSelf()
                         .OfType<T>()

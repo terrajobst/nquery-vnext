@@ -17,12 +17,10 @@ public sealed class HighlightingService
     {
         ThrowIfNull(view);
 
-        var semanticModel = view.Document.GetSemanticModel(cancellationToken);
-
         var result = ImmutableArray.CreateBuilder<TextSpan>();
 
         foreach (var highlighter in _highlighters)
-            result.AddRange(highlighter.GetHighlights(semanticModel, view.Position));
+            result.AddRange(highlighter.GetHighlights(view, cancellationToken));
 
         return result.ToImmutable();
     }

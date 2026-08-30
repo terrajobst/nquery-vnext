@@ -15,7 +15,6 @@ public sealed class CodeRefactoringService
     {
         ThrowIfNull(view);
 
-        var semanticModel = view.Document.GetSemanticModel(cancellationToken);
-        return [.. _providers.SelectMany(p => p.GetRefactorings(semanticModel, view.Position))];
+        return [.. _providers.SelectMany(p => p.GetRefactorings(view, cancellationToken))];
     }
 }

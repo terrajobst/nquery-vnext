@@ -266,15 +266,18 @@ structurally.
 * Use benchmarks to compare old vs new engine
 * Use benchmarks to optimize the engine further (e.g. row buffer copies, boxing,
   slot representation)
-* Providers still speak the wrong currency. `IHighlighter.GetHighlights` and its
-  nine peers take a `SemanticModel` or a `SyntaxTree`, so a provider still cannot
-  see the `Document` — and the `CancellationToken` a service is handed dies at
-  the provider boundary instead of being passed on, which is a plain bug. Roslyn
-  draws this line by whether the extension point is host-aware: `CodeFixContext`
-  carries a document, `DiagnosticAnalyzer` deliberately gets none because it has
-  to run inside `csc.exe`. That maps onto `ICodeFixProvider` (should take a
-  document) and `ICodeIssueProvider` (analyzer-shaped, fine as it is).
-  Independent of the composition work below.
+* `IOutliner` and `ISelectionSpanProvider` are the two extension points that
+  don't take a `Document`. The other eight now take a `DocumentView` (or a
+  `Document`, for the whole-file `ICodeIssueProvider`) plus a
+  `CancellationToken`, matching the services. These two are visitor callbacks
+  invoked per node during a tree walk, so the node is their actual input and a
+  document would be dead weight. Either accept that they are a different kind of
+  thing and say so in their doc comments, or reshape the walk so they are handed
+  a document too — but don't leave it looking like an oversight.
+* Providers receive a `CancellationToken` but only the base classes act on it,
+  by passing it to `GetSemanticModel`. Nothing checks it between providers, so a
+  fan-out over fifteen quick info providers still runs to completion after
+  cancellation. Cheap to fix in the services' loops.
 * TypeSymbol
     - Support type aliases
     - Host methods and properties on TypeSymbol, lazily loaded.

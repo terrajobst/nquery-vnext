@@ -8,8 +8,12 @@ namespace NQuery.Authoring.Completion.Providers;
 
 internal sealed class SymbolCompletionProvider : ICompletionProvider
 {
-    public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
+    public IEnumerable<CompletionItem> GetItems(DocumentView view, CancellationToken cancellationToken)
     {
+        ThrowIfNull(view);
+
+        var semanticModel = view.Document.GetSemanticModel(cancellationToken);
+        var position = view.Position;
         var root = semanticModel.SyntaxTree.Root;
 
         // We don't want to show a completion when typing an alias name.

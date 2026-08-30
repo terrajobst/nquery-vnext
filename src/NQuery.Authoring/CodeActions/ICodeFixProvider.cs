@@ -1,8 +1,6 @@
-using NQuery.CodeAnalysis;
-
 namespace NQuery.Authoring.CodeActions;
 
 public interface ICodeFixProvider
 {
-    IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position);
+    IEnumerable<ICodeAction> GetFixes(DocumentView view, CancellationToken cancellationToken);
 }

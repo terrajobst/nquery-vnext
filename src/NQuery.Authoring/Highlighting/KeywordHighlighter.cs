@@ -8,12 +8,14 @@ namespace NQuery.Authoring.Highlighting;
 public abstract class KeywordHighlighter<T> : IHighlighter
     where T : SyntaxNode
 {
-    public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
+    public IEnumerable<TextSpan> GetHighlights(DocumentView view, CancellationToken cancellationToken)
     {
-        ThrowIfNull(semanticModel);
+        ThrowIfNull(view);
 
-        var syntaxTree = semanticModel.SyntaxTree;
-        var token = syntaxTree.Root.FindToken(position);
+        var semanticModel = view.Document.GetSemanticModel(cancellationToken);
+        var position = view.Position;
+
+        var token = semanticModel.SyntaxTree.Root.FindToken(position);
 
         for (var current = token.Parent; current is not null; current = current.Parent)
         {

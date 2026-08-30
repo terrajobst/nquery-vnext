@@ -1,8 +1,6 @@
-using NQuery.CodeAnalysis;
-
 namespace NQuery.Authoring.CodeActions;
 
 public interface ICodeIssueProvider
 {
-    IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel);
+    IEnumerable<CodeIssue> GetIssues(Document document, CancellationToken cancellationToken);
 }

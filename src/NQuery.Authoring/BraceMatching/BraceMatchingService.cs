@@ -16,10 +16,8 @@ public sealed class BraceMatchingService
     {
         ThrowIfNull(view);
 
-        var syntaxTree = view.Document.GetSyntaxTree(cancellationToken);
-
         return (from m in _braceMatchers
-                let r = m.MatchBraces(syntaxTree, view.Position)
+                let r = m.MatchBraces(view, cancellationToken)
                 where r.IsValid
                 select r).DefaultIfEmpty(BraceMatchingResult.None).First();
     }

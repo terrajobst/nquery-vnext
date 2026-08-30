@@ -1,8 +1,6 @@
-using NQuery.CodeAnalysis;
-
 namespace NQuery.Authoring.BraceMatching;
 
 public interface IBraceMatcher
 {
-    BraceMatchingResult MatchBraces(SyntaxTree syntaxTree, int position);
+    BraceMatchingResult MatchBraces(DocumentView view, CancellationToken cancellationToken);
 }

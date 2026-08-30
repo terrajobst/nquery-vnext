@@ -5,9 +5,12 @@ namespace NQuery.Authoring.CodeActions.Refactorings;
 
 internal sealed class RemoveRedundantBracketsCodeRefactoringProvider : ICodeRefactoringProvider
 {
-    public IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position)
+    public IEnumerable<ICodeAction> GetRefactorings(DocumentView view, CancellationToken cancellationToken)
     {
-        var syntaxTree = semanticModel.SyntaxTree;
+        ThrowIfNull(view);
+
+        var syntaxTree = view.Document.GetSyntaxTree(cancellationToken);
+        var position = view.Position;
         var token = syntaxTree.Root.FindTokenOnLeft(position);
         if (token.Kind != SyntaxKind.IdentifierToken || !token.IsParenthesizedIdentifier())
             return [];

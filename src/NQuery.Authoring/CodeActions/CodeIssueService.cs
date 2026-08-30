@@ -15,7 +15,6 @@ public sealed class CodeIssueService
     {
         ThrowIfNull(document);
 
-        var semanticModel = document.GetSemanticModel(cancellationToken);
-        return [.. _providers.SelectMany(p => p.GetIssues(semanticModel))];
+        return [.. _providers.SelectMany(p => p.GetIssues(document, cancellationToken))];
     }
 }

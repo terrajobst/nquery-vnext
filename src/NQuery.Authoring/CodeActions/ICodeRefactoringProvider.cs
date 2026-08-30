@@ -1,8 +1,6 @@
-using NQuery.CodeAnalysis;
-
 namespace NQuery.Authoring.CodeActions;
 
 public interface ICodeRefactoringProvider
 {
-    IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position);
+    IEnumerable<ICodeAction> GetRefactorings(DocumentView view, CancellationToken cancellationToken);
 }

@@ -1,8 +1,6 @@
-using NQuery.CodeAnalysis;
-
 namespace NQuery.Authoring.Completion;
 
 public interface ICompletionProvider
 {
-    IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position);
+    IEnumerable<CompletionItem> GetItems(DocumentView view, CancellationToken cancellationToken);
 }

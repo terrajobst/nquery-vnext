@@ -5,9 +5,12 @@ namespace NQuery.Authoring.Completion.Providers;
 
 internal sealed class KeywordCompletionProvider : ICompletionProvider
 {
-    public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
+    public IEnumerable<CompletionItem> GetItems(DocumentView view, CancellationToken cancellationToken)
     {
-        var syntaxTree = semanticModel.SyntaxTree;
+        ThrowIfNull(view);
+
+        var syntaxTree = view.Document.GetSyntaxTree(cancellationToken);
+        var position = view.Position;
         var root = syntaxTree.Root;
 
         // For certain constructs we never want to show a keyword completion.
