@@ -8,7 +8,7 @@ public abstract class SeparatedSyntaxListSelectionSpanProvider<TParent, TChild> 
     where TParent : SyntaxNode
     where TChild : SyntaxNode
 {
-    protected override IEnumerable<TextSpan> Provide(SyntaxNodeOrToken nodeOrToken, TParent parentNode)
+    protected override IEnumerable<TextSpan> GetSpans(SyntaxNodeOrToken nodeOrToken, TParent parentNode)
     {
         var list = GetList(parentNode);
         var index = list.IndexOf(nodeOrToken);

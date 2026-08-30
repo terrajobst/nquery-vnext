@@ -28,7 +28,7 @@ public sealed class SelectionService
         var selectedSpan = view.Selection;
 
         var candidates = GetEnclosingSpans(root, selectedSpan.Start)
-                            .Concat(_providers.SelectMany(p => p.Provide(view, cancellationToken)));
+                            .Concat(_providers.SelectMany(p => p.GetSpans(view, cancellationToken)));
 
         var result = root.Span;
 

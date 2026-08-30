@@ -71,7 +71,7 @@ public class SelectionServiceTests
             {
                 var view = DocumentView.Create(document, position);
                 var candidates = GetEnclosingSpans(root, position)
-                                    .Concat(providers.SelectMany(p => p.Provide(view, default)))
+                                    .Concat(providers.SelectMany(p => p.GetSpans(view, default)))
                                     .ToArray();
 
                 foreach (var a in candidates)

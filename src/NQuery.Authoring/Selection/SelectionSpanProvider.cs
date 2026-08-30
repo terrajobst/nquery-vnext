@@ -9,7 +9,7 @@ namespace NQuery.Authoring.Selection;
 public abstract class SelectionSpanProvider<T> : ISelectionSpanProvider
     where T : SyntaxNode
 {
-    public IEnumerable<TextSpan> Provide(DocumentView view, CancellationToken cancellationToken)
+    public IEnumerable<TextSpan> GetSpans(DocumentView view, CancellationToken cancellationToken)
     {
         ThrowIfNull(view);
 
@@ -18,11 +18,11 @@ public abstract class SelectionSpanProvider<T> : ISelectionSpanProvider
 
         return from nodeOrToken in GetSelfAndAncestors(token)
                where nodeOrToken.Parent is T
-               from span in Provide(nodeOrToken, (T)nodeOrToken.Parent!)
+               from span in GetSpans(nodeOrToken, (T)nodeOrToken.Parent!)
                select span;
     }
 
-    protected abstract IEnumerable<TextSpan> Provide(SyntaxNodeOrToken nodeOrToken, T parentNode);
+    protected abstract IEnumerable<TextSpan> GetSpans(SyntaxNodeOrToken nodeOrToken, T parentNode);
 
     private static IEnumerable<SyntaxNodeOrToken> GetSelfAndAncestors(SyntaxToken token)
     {
