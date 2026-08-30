@@ -1,8 +1,6 @@
-using NQuery.CodeAnalysis;
-
 namespace NQuery.Authoring.Outlining;
 
 public interface IOutliner
 {
-    IEnumerable<OutliningRegionSpan> FindRegions(SyntaxNodeOrToken nodeOrToken);
+    IEnumerable<OutliningRegionSpan> FindRegions(Document document, CancellationToken cancellationToken);
 }

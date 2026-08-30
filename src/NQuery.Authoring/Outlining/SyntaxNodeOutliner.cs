@@ -5,13 +5,12 @@ namespace NQuery.Authoring.Outlining;
 public abstract class SyntaxNodeOutliner<T> : IOutliner
     where T : SyntaxNode
 {
-
-    public IEnumerable<OutliningRegionSpan> FindRegions(SyntaxNodeOrToken nodeOrToken)
+    public IEnumerable<OutliningRegionSpan> FindRegions(Document document, CancellationToken cancellationToken)
     {
-        var node = nodeOrToken.IsNode ? nodeOrToken.AsNode() : null;
-        return node is not T typedNode
-            ? []
-            : FindRegions(typedNode);
+        ThrowIfNull(document);
+
+        var root = document.GetSyntaxTree(cancellationToken).Root;
+        return root.DescendantNodesAndSelf().OfType<T>().SelectMany(FindRegions);
     }
 
     protected abstract IEnumerable<OutliningRegionSpan> FindRegions(T node);
