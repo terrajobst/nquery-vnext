@@ -1,2 +1,3 @@
 SELECT  *
-FROM    [Order Details] od
+FROM    Employees
+WHERE   City = 'Sales'

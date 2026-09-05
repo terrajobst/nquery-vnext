@@ -1,9 +1,9 @@
 -- [Order Details] has a space in its name, so it has to be written bracketed. This is the
 -- interesting case for completion (the replacement range must cover the whole bracketed token)
 -- and for hover.
-SELECT      p.ProductName,
-            SUM(d.Quantity) AS TotalQuantity
-FROM        [Order Details] d
-INNER JOIN  Products p ON p.ProductID = d.ProductID
-GROUP BY    p.ProductName
-ORDER BY    TotalQuantity DESC
+SELECT  p.ProductName,
+        SUM(d.Quantity) AS TotalQuantity
+FROM    [Order Details] d
+            INNER JOIN Products p ON p.ProductID = d.ProductID
+GROUP   BY p.ProductName
+ORDER   BY TotalQuantity DESC

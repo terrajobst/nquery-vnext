@@ -1,15 +1,14 @@
 -- A common table expression: 'Recent' is declared here and referenced below, which is what
 -- go-to-definition and find-all-references work against.
-WITH Recent AS
-(
+WITH Recent AS (
     SELECT  o.OrderID,
             o.CustomerID,
             o.OrderDate
     FROM    Orders o
     WHERE   o.ShippedDate IS NOT NULL
 )
-SELECT      c.CompanyName,
-            r.OrderID
-FROM        Recent r
-INNER JOIN  Customers c ON c.CustomerID = r.CustomerID
-ORDER BY    r.OrderDate DESC
+SELECT  c.CompanyName,
+        r.OrderID
+FROM    Recent r
+            INNER JOIN Customers c ON c.CustomerID = r.CustomerID
+ORDER   BY r.OrderDate DESC

@@ -10,6 +10,7 @@ using NQuery.Authoring.CodeActions.Issues;
 using NQuery.Authoring.CodeActions.Refactorings;
 using NQuery.Authoring.Commenting;
 using NQuery.Authoring.Completion;
+using NQuery.Authoring.Formatting;
 using NQuery.Authoring.Completion.Providers;
 using NQuery.Authoring.Highlighting;
 using NQuery.Authoring.Highlighting.Highlighters;
@@ -52,6 +53,7 @@ public sealed class AuthoringServicesBuilder
         AddService<CodeRefactoringService>();
         AddService<CommentingService>();
         AddService<CompletionService>();
+        AddService<FormattingService>();
         AddService<HighlightingService>();
         AddService<OutliningService>();
         AddService<QuickInfoService>();

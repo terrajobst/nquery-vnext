@@ -1,4 +1,7 @@
+using System.Text;
+
 using NQuery.Authoring.LanguageServer.Protocol;
+using NQuery.CodeAnalysis.Text;
 using NQuery.LanguageServer.Infrastructure;
 using NQuery.Northwind;
 
@@ -39,6 +42,8 @@ public sealed class LanguageServerTests
         Assert.True(capabilities.ReferencesProvider);
         Assert.True(capabilities.FoldingRangeProvider);
         Assert.True(capabilities.SelectionRangeProvider);
+        Assert.True(capabilities.DocumentFormattingProvider);
+        Assert.True(capabilities.DocumentRangeFormattingProvider);
         Assert.NotNull(capabilities.CompletionProvider);
         Assert.NotNull(capabilities.SemanticTokensProvider);
     }
@@ -333,6 +338,71 @@ public sealed class LanguageServerTests
 
         Assert.NotEmpty(ranges);
         Assert.All(ranges, r => Assert.True(r.EndLine > r.StartLine));
+    }
+
+    [Fact]
+    public async Task Formatting_ReturnsEditsAgainstTheOpenDocument()
+    {
+        await using var harness = await StartAsync();
+
+        const string text = "select c.CompanyName,c.Country from Customers c";
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentFormatting,
+            new DocumentFormattingParams
+            {
+                TextDocument = Document(),
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.NotEmpty(edits);
+
+        var formatted = Apply(text, edits);
+        Assert.Equal("SELECT  c.CompanyName,\n        c.Country\nFROM    Customers c\n", formatted);
+    }
+
+    [Fact]
+    public async Task RangeFormatting_OnlyReturnsEditsInsideTheRange()
+    {
+        await using var harness = await StartAsync();
+
+        const string text = "select    1,2\nfrom     Customers";
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentRangeFormatting,
+            new DocumentRangeFormattingParams
+            {
+                TextDocument = Document(),
+                Range = new LspRange { Start = At(1, 0), End = At(1, 8) },
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.NotEmpty(edits);
+        Assert.All(edits, e => Assert.Equal(1, e.Range.Start.Line));
+    }
+
+    // Edits are against the document as it is now, so they are applied back to front.
+    private static string Apply(string text, TextEdit[] edits)
+    {
+        var source = SourceText.From(text);
+        var result = new StringBuilder(text);
+
+        foreach (var edit in edits.OrderByDescending(e => e.Range.Start.Line).ThenByDescending(e => e.Range.Start.Character))
+        {
+            var start = source.Lines[edit.Range.Start.Line].Span.Start + edit.Range.Start.Character;
+            var end = source.Lines[edit.Range.End.Line].Span.Start + edit.Range.End.Character;
+
+            result.Remove(start, end - start);
+            result.Insert(start, edit.NewText);
+        }
+
+        return result.ToString();
     }
 
     [Fact]

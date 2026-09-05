@@ -13,6 +13,10 @@ public sealed class NQueryLanguageServerOptions
     // deliberately not part of the service set.
     public AuthoringServices Services { get; set; } = AuthoringServices.Create();
 
+    // The SQL layout the server formats with. LSP lets the client send only tab size, spaces vs
+    // tabs, and the final newline, so everything else about style is decided here.
+    public Formatting.FormattingOptions FormattingOptions { get; set; } = Formatting.FormattingOptions.Default;
+
     public string ServerName { get; set; } = @"NQuery Language Server";
 
     public string? ServerVersion { get; set; }

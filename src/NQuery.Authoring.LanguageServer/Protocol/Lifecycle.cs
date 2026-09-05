@@ -103,6 +103,8 @@ public sealed record ServerCapabilities
     public bool? FoldingRangeProvider { get; init; }
     public bool? SelectionRangeProvider { get; init; }
     public CodeActionOptions? CodeActionProvider { get; init; }
+    public bool? DocumentFormattingProvider { get; init; }
+    public bool? DocumentRangeFormattingProvider { get; init; }
 
     // Non-standard NQuery capabilities (nquery/execute, nquery/showPlan) go here so a client can
     // discover them without guessing.

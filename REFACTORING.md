@@ -299,11 +299,31 @@ structurally.
 * We still need to support cases where the type isn't known until runtime. That
   should probably be `compilation.CompileExpression(typeof(SomeType))` that
   returns `Expression<object>`.
-* Add a formatter
-    - Should use some standard SQL formatting rules
-    - Should probably handle long lines
-    - Should probably handle keyword casing
-    - Should probably offer identifier normalization (brackets, quotes, always)
+* Formatter follow-ups. `FormattingService` is implemented (layout, wrapping,
+  keyword casing, identifier unquoting) and wired to `textDocument/formatting`
+  and `rangeFormatting`. What was deliberately left out:
+    - **Options from `.editorconfig`.** The option names already mirror the
+      standard properties (`indent_size`, `indent_style`, `max_line_length`,
+      `insert_final_newline`, `end_of_line`), so what's missing is the reader and
+      a precedence rule. The resolution can't live in `NQuery.Authoring`: it is
+      I/O and a cache, and a `Document` has no path. Split it as a pure parser
+      (text in, options out) plus a directory walk in the server, where the `Uri`
+      already is. Precedence should be editorconfig > `workspace/configuration` >
+      the values in the LSP request > preset. Keys are public API the moment they
+      are written into a checked-in file, so ship few, ignore unknown ones, and
+      report an invalid *value* as a diagnostic.
+    - **The river layout.** Right-aligned keywords are the same machinery as
+      `Tabular` with a different alignment computation -- `GapKind.Pad` already
+      targets a column -- but the pad would have to move in front of the keyword.
+    - **Leading commas.** Break before the separator rather than after it, at
+      `payload - 2`. Cheap, but it interacts with alignment in every list.
+    - **Per-clause list styles.** `SelectColumns` governs the select list; every
+      other list wraps on demand. Splitting them is a rename away.
+    - **Format on type.** `onTypeFormatting` over the just-closed construct would
+      reuse the range path unchanged.
+    - Wrapping only breaks lists, argument lists, CASE, and AND/OR chains. A long
+      arithmetic or comparison expression still runs off the line; giving those
+      groups of their own is additive.
 * Add a `RenameService`. `SymbolSearchService.FindUsages` already produces the
   definition and reference spans, so the mechanical edit is nearly free; what
   makes rename a real feature rather than a search-and-replace is everything

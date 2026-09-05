@@ -267,6 +267,45 @@ The commenting system provides toggle single-line (`--`) and toggle multi-line
 - **`SyntaxTree.ToggleMultiLineComment(span)`**: Toggles `/* */` wrapping.
 - **`SyntaxTree.ToggleComment(span)`**: Auto-detects which mode to use.
 
+### Formatting
+
+`FormattingService` reformats a document, or a span of one, and hands back either a
+new `Document` or the underlying `TextChange`s for a host that wants edits.
+
+```csharp
+public sealed class FormattingService
+{
+    public Document Format(Document document, FormattingOptions options, CancellationToken ct = default);
+    public Document Format(Document document, TextSpan span, FormattingOptions options, CancellationToken ct = default);
+    public ImmutableArray<TextChange> GetChanges(Document document, FormattingOptions options, CancellationToken ct = default);
+    public ImmutableArray<TextChange> GetChanges(Document document, TextSpan span, FormattingOptions options, CancellationToken ct = default);
+}
+```
+
+The syntax tree is a red-only view over its text, so formatting is expressed as
+text changes rather than as a rewritten tree. Three passes contribute, all
+landing on disjoint spans: the layout pass rewrites the whitespace between two
+adjacent tokens, and the casing and identifier passes rewrite individual token
+texts. That is also why `Keywords = Upper` with no layout change is a legitimate
+configuration.
+
+Layout decisions come from two places. `SpacingRules` answers what goes between a
+token pair, and `LayoutWalker` overrides that where structure demands a line
+break, an indent, or the tabular pad. An unresolved break is a *soft* line: it
+renders as a break only when the enclosing group -- an argument list, a
+subquery, a CASE, a chain of ANDs -- does not fit inside `MaxLineLength`.
+
+Comments are never moved, only re-indented, and a single line comment always ends
+its line. A region around a missing or skipped token is copied through verbatim,
+so a document that does not parse still formats everywhere else.
+
+`FormattingOptions` is a parameter rather than service state, and ships as three
+presets: `Tabular` (the default -- keyword flush left, payload padded to
+`KeywordColumn`), `Stacked` (list clauses put their keyword on its own line), and
+`Compact` (stacked, breaking only what does not fit). `IndentSize`, `UseTabs`,
+`MaxLineLength`, `InsertFinalNewline` and `NewLine` mirror the standard
+EditorConfig properties of the same meaning.
+
 ### Symbol Markup
 
 `SymbolMarkup` is a formatted text representation of a symbol, used in quick

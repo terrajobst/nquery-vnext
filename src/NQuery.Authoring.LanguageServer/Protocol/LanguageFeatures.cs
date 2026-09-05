@@ -153,3 +153,29 @@ public sealed record SemanticTokens
     public string? ResultId { get; init; }
     public required int[] Data { get; init; }
 }
+
+// Formatting
+
+public sealed record DocumentFormattingParams
+{
+    public required TextDocumentIdentifier TextDocument { get; init; }
+    public required FormattingOptions Options { get; init; }
+}
+
+public sealed record DocumentRangeFormattingParams
+{
+    public required TextDocumentIdentifier TextDocument { get; init; }
+    public required Range Range { get; init; }
+    public required FormattingOptions Options { get; init; }
+}
+
+// The client's editor settings for the document being formatted. These are the only formatting
+// values LSP itself defines; everything about SQL layout is server policy.
+public sealed record FormattingOptions
+{
+    public required int TabSize { get; init; }
+    public required bool InsertSpaces { get; init; }
+    public bool? TrimTrailingWhitespace { get; init; }
+    public bool? InsertFinalNewline { get; init; }
+    public bool? TrimFinalNewlines { get; init; }
+}

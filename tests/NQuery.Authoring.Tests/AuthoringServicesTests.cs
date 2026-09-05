@@ -7,6 +7,7 @@ using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.Commenting;
 using NQuery.Authoring.Completion;
 using NQuery.Authoring.Completion.Providers;
+using NQuery.Authoring.Formatting;
 using NQuery.Authoring.Highlighting;
 using NQuery.Authoring.Outlining;
 using NQuery.Authoring.QuickInfo;
@@ -27,6 +28,7 @@ public class AuthoringServicesTests
         typeof(CodeRefactoringService),
         typeof(CommentingService),
         typeof(CompletionService),
+        typeof(FormattingService),
         typeof(HighlightingService),
         typeof(OutliningService),
         typeof(QuickInfoService),

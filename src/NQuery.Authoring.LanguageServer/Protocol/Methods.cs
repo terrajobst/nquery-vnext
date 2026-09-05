@@ -28,6 +28,8 @@ public static class Methods
     public const string TextDocumentFoldingRange = @"textDocument/foldingRange";
     public const string TextDocumentSelectionRange = @"textDocument/selectionRange";
     public const string TextDocumentCodeAction = @"textDocument/codeAction";
+    public const string TextDocumentFormatting = @"textDocument/formatting";
+    public const string TextDocumentRangeFormatting = @"textDocument/rangeFormatting";
 
     // Window
     public const string WindowShowMessage = @"window/showMessage";

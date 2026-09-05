@@ -106,6 +106,8 @@ Every feature delegates to the existing authoring APIs:
 | `foldingRange`        | `Root.FindRegions()`                                    |
 | `selectionRange`      | `SyntaxTree.ExtendSelection(span)`, walked to a fixpoint |
 | `codeAction`          | `GetFixes(pos)`, `GetRefactorings(pos)`, `CodeIssue.Actions`  |
+| `formatting`          | `FormattingService.GetChanges(document)`                |
+| `rangeFormatting`     | `FormattingService.GetChanges(document, span)`          |
 
 Notes:
 
@@ -186,9 +188,15 @@ Edits are computed for every offered action rather than through `codeAction/reso
 one reparse per action each time the lightbulb is consulted. That is comfortable at the size of a
 query; `resolveProvider` is the lever if it ever stops being.
 
+`textDocument/formatting` and `rangeFormatting` need only the syntax tree, so they answer even
+when the catalog failed to load. The SQL layout is server policy
+(`NQueryLanguageServerOptions.FormattingOptions`); the client is only consulted for the values
+LSP itself defines -- tab size, spaces versus tabs, and the final newline -- which are the user's
+editor settings and so win over the defaults. The newline is taken from whatever the document
+already uses rather than from the server's platform.
+
 ### Not implemented
 
-- **Formatting** — there is no formatter in the codebase.
 - **Rename** — belongs in the authoring layer rather than here: `SymbolSearcher` supplies the
   spans, but conflict detection and re-quoting a name that needs brackets are language concerns.
 - **Brace matching and commenting** — handled client-side by

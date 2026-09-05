@@ -143,6 +143,8 @@ internal sealed partial class LanguageServerTarget : ILanguageServerHost
             },
             FoldingRangeProvider = true,
             SelectionRangeProvider = true,
+            DocumentFormattingProvider = true,
+            DocumentRangeFormattingProvider = true,
             CodeActionProvider = new CodeActionOptions
             {
                 CodeActionKinds = [Protocol.CodeActionKind.QuickFix, Protocol.CodeActionKind.Refactor],
