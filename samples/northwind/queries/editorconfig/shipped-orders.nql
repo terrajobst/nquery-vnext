@@ -1,0 +1,13 @@
+-- One .editorconfig applies here: the one next to this file. It asks for the
+-- stacked layout, a two-space indent and an 80 column limit, which is what
+-- this query is already formatted to. Change a key over there and reformat
+-- to watch it move.
+SELECT
+  o.OrderID,
+  o.OrderDate,
+  o.ShippedDate,
+  c.CompanyName
+FROM [Orders] o
+INNER JOIN Customers c ON c.CustomerID = o.CustomerID
+WHERE o.ShippedDate IS NOT NULL
+ORDER BY o.ShippedDate DESC

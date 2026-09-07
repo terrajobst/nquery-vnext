@@ -1,0 +1,9 @@
+# The formatter reads this file the way any other tool does: it walks up from the query being
+# formatted, applying the configs it finds farthest-first, and stops here because of root = true.
+# The repository's own .editorconfig therefore has no say over these two samples.
+root = true
+
+[*.nql]
+indent_size = 2
+max_line_length = 80
+nquery_style = stacked

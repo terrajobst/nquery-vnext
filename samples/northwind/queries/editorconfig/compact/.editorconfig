@@ -1,0 +1,7 @@
+# No root = true, so this one layers on top of the config above rather than replacing it:
+# indent_size and max_line_length still come from there, and only the two keys written here change.
+# That is why the query in this folder wraps at the same 80 columns as its neighbour but keeps its
+# select list on one line.
+[*.nql]
+nquery_style = compact
+nquery_keyword_case = lower
