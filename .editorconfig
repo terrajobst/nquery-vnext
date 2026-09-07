@@ -8,7 +8,6 @@ insert_final_newline = true
 
 # Core editorconfig formatting - indentation
 
-end_of_line = crlf
 indent_size = 4
 indent_style = space
 tab_width = 4
@@ -253,3 +252,17 @@ dotnet_naming_style.underscore_camel_case.required_prefix = _
 dotnet_naming_style.underscore_camel_case.required_suffix =
 dotnet_naming_style.underscore_camel_case.word_separator =
 dotnet_naming_style.underscore_camel_case.capitalization = camel_case
+
+###############################################################################
+# Line endings
+#
+# Everything else is left to .gitattributes (* text=auto), which normalizes on
+# commit and checks out whatever the platform wants. These two can't be: a shell
+# script with CRLF doesn't run, and a batch file is read line by line by cmd.
+###############################################################################
+
+[*.sh]
+end_of_line = lf
+
+[*.{cmd,bat}]
+end_of_line = crlf
