@@ -72,6 +72,12 @@
         "path": "./syntaxes/nquery-quickinfo.tmLanguage.json"
       }
     ],
+    "configurationDefaults": {
+      "[nquery]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "nquery.vscode-nquery"
+      }
+    },
     "jsonValidation": [
       {
         "fileMatch": "*.nqproj",

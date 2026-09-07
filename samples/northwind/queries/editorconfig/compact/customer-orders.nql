@@ -1,6 +1,7 @@
--- Two .editorconfig files apply here: this folder's, and the one above it that they both share.
--- The compact style and the lower case keywords come from the nearer file; the two-space indent
--- and the 80 column limit come from the farther one.
+-- Two .editorconfig files apply here: this folder's, and the one above that
+-- both samples share. The compact style and the lower case keywords come from
+-- the nearer file; the two-space indent and the 80 column limit come from the
+-- farther one.
 select c.CompanyName, c.Country, COUNT(o.OrderID) as OrderCount
 from Customers c
 inner join Orders o on o.CustomerID = c.CustomerID

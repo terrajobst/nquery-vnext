@@ -127,6 +127,14 @@ syntax highlighting and project validation but starts no server processes.
 | `nquery.defaultHost.args`    | Arguments for that server                   |
 | `nquery.trace.server`        | `off` / `messages` / `verbose`              |
 
+Saving a `.nql` or `.nqe` formats it. The extension contributes
+`"[nquery]": { "editor.formatOnSave": true }` as a *default* rather than a setting, so nobody has
+to change their own configuration and nothing is forced: `"[nquery]": { "editor.formatOnSave":
+false }` in your settings turns it back off, and a global `editor.formatOnSave` of your own is
+unaffected either way. What the formatting looks like comes from the server and from any
+`.editorconfig` above the file — see the formatter's EditorConfig keys in
+`docs/authoring/authoring.md`.
+
 ## Code actions
 
 The lightbulb offers NQuery's quick fixes and refactorings — adding a missing `AS`, expanding a
