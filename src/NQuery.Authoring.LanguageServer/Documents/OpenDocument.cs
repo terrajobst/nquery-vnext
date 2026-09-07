@@ -23,7 +23,12 @@ internal sealed class OpenDocument
         LanguageId = languageId;
         Version = version;
         Container = new LspSourceTextContainer(text);
-        _document = Document.Create(kind, Container.Current, catalog, services);
+
+        // Only a file: URI names something on disk. An untitled buffer or a document the client
+        // addresses some other way has no path, and a service resolving settings from the file
+        // system needs to be told that rather than left to guess.
+        var filePath = uri.IsFile ? uri.LocalPath : null;
+        _document = Document.Create(kind, Container.Current, filePath, catalog, services);
     }
 
     public Uri Uri { get; }

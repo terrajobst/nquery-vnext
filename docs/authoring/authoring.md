@@ -54,8 +54,10 @@ via async methods with caching.
 public sealed class Document
 {
     public DocumentKind Kind { get; }
-    public Catalog Catalog { get; }
     public SourceText Text { get; }
+    public string? FilePath { get; }
+    public Catalog Catalog { get; }
+    public AuthoringServices Services { get; }
 
     // Synchronous access (returns true if already computed)
     public bool TryGetSyntaxTree(out SyntaxTree syntaxTree);
@@ -69,9 +71,14 @@ public sealed class Document
 }
 ```
 
-`DocumentKind` and `Catalog` can be changed by the workspace to support
-different document types (e.g., query files vs. expression files) and schema
-contexts.
+`DocumentKind` and `Catalog` can be changed by the host to support different
+document types (e.g., query files vs. expression files) and schema contexts;
+every `With*` method returns a new document and carries the rest across.
+
+`FilePath` is where the document lives, or `null` when it lives nowhere -- a
+buffer that was never saved, or one the host addresses by something other than a
+path. Nothing in the analysis reads it: it is there for services that resolve
+settings from the file system next to the document, such as EditorConfig.
 
 ### DocumentView
 

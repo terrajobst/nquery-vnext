@@ -24,7 +24,7 @@ public static class DocumentFactory
 
     public static Document CreateQuery(string query, AuthoringServices? services = null)
     {
-        return Document.Create(DocumentKind.Query, SourceText.From(query), Catalog, services ?? DefaultServices);
+        return Document.Create(DocumentKind.Query, SourceText.From(query), filePath: null, Catalog, services ?? DefaultServices);
     }
 
     public static Document CreateQuery(string textWithPipe, out int position, AuthoringServices? services = null)
@@ -47,7 +47,7 @@ public static class DocumentFactory
 
     public static Document CreateExpression(string expression, AuthoringServices? services = null)
     {
-        return Document.Create(DocumentKind.Expression, SourceText.From(expression), Catalog, services ?? DefaultServices);
+        return Document.Create(DocumentKind.Expression, SourceText.From(expression), filePath: null, Catalog, services ?? DefaultServices);
     }
 
     public static Document CreateExpression(string textWithPipe, out int position, AuthoringServices? services = null)
