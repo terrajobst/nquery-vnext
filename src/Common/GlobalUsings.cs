@@ -8,9 +8,10 @@ global using static System.ArgumentException;
 global using static NQuery.ArgumentValidation;
 
 #if NETFRAMEWORK
-// .NET Framework's ArgumentNullException/ArgumentOutOfRangeException lack the ThrowIf* guard
-// helpers, so we import the types that supply them as extension members to keep the unqualified
-// call form working.
+// .NET Framework's ArgumentException/ArgumentNullException/ArgumentOutOfRangeException lack the
+// ThrowIf* guard helpers, so we import the types that supply them as extension members to keep the
+// unqualified call form working.
+global using static NQuery.ArgumentExceptionExtensions;
 global using static NQuery.ArgumentNullExceptionExtensions;
 global using static NQuery.ArgumentOutOfRangeExceptionExtensions;
 #else
