@@ -9,7 +9,8 @@ Test projects:
 - `tests/NQuery.Authoring.Tests`
 
 Each multi-targets `net8.0` and `net481`, built to:
-`artifacts/bin/<Project>/debug_<tfm>/<Project>.exe`
+`artifacts/bin/<Project>/debug_<tfm>/<Project>` — with a `.exe` suffix on Windows
+and none on Linux or macOS, where the apphost carries no extension.
 
 ### Run the whole suite
 
@@ -26,12 +27,16 @@ dotnet test --project tests/NQuery.Tests/NQuery.Tests.csproj
 
 ### Filter tests (the reliable way)
 
-Run the built test **exe directly** and use xUnit's native single-dash filters.
+Run the built test **app directly** and use xUnit's native single-dash filters.
 Build first (`dotnet build tests/NQuery.Tests/NQuery.Tests.csproj`), then:
 
 ```
-artifacts/bin/NQuery.Tests/debug_net8.0/NQuery.Tests.exe -method "*Subquery*"
+artifacts/bin/NQuery.Tests/debug_net8.0/NQuery.Tests -method "*Subquery*"
 ```
+
+On Windows that path ends in `.exe`. CI builds and runs the whole `net8.0` suite
+on Linux (`build`), and Windows only runs the `net481` target (`build-framework`),
+so the extensionless form is the one that matches the main job.
 
 Native filter options (wildcard `*` allowed at start and/or end; repeating a
 positive filter is OR, a negative `-` filter is AND):
@@ -44,5 +49,5 @@ positive filter is OR, a negative `-` filter is AND):
 - `-filter "/asm/namespace/class/method[trait=value]"` — combined query-filter
   language
 
-`-` prefixes are native xUnit options (not `--`). Run the exe in the **Bash tool**
-and append `2>&1 | tail -n N` to trim the run banner.
+`-` prefixes are native xUnit options (not `--`). Run the test app in the **Bash
+tool** and append `2>&1 | tail -n N` to trim the run banner.
