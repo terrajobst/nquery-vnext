@@ -300,18 +300,21 @@ structurally.
   should probably be `compilation.CompileExpression(typeof(SomeType))` that
   returns `Expression<object>`.
 * Formatter follow-ups. `FormattingService` is implemented (layout, wrapping,
-  keyword casing, identifier unquoting) and wired to `textDocument/formatting`
-  and `rangeFormatting`. What was deliberately left out:
-    - **Options from `.editorconfig`.** The option names already mirror the
-      standard properties (`indent_size`, `indent_style`, `max_line_length`,
-      `insert_final_newline`, `end_of_line`), so what's missing is the reader and
-      a precedence rule. The resolution can't live in `NQuery.Authoring`: it is
-      I/O and a cache, and a `Document` has no path. Split it as a pure parser
-      (text in, options out) plus a directory walk in the server, where the `Uri`
-      already is. Precedence should be editorconfig > `workspace/configuration` >
-      the values in the LSP request > preset. Keys are public API the moment they
-      are written into a checked-in file, so ship few, ignore unknown ones, and
-      report an invalid *value* as a diagnostic.
+  keyword casing, identifier unquoting), wired to `textDocument/formatting` and
+  `rangeFormatting`, and reads `.editorconfig` through
+  `EditorConfigFormattingOptionsResolver`. What is still left out:
+    - **Invalid values are ignored rather than reported.** An unreadable value is
+      dropped exactly like an unknown key, so a typo is silent. Saying so would
+      mean publishing diagnostics against a file the server doesn't own and never
+      clears on close, or a `window/showMessage` once per resolution -- neither
+      obviously right, so nothing is reported today.
+    - **`workspace/configuration` is not consulted.** Precedence is currently
+      editorconfig > the values in the LSP request > the server's preset. Pulling
+      a settings section would slot in between the last two.
+    - **No caching.** Every format request re-reads every `.editorconfig` on the
+      way up. That is affordable because formatting is user-initiated; format on
+      type would change the calculus, and a cache then needs
+      `didChangeWatchedFiles`, which the server doesn't register today.
     - **The river layout.** Right-aligned keywords are the same machinery as
       `Tabular` with a different alignment computation -- `GapKind.Pad` already
       targets a column -- but the pad would have to move in front of the keyword.

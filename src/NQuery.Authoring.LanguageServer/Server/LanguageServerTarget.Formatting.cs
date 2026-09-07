@@ -40,8 +40,12 @@ internal sealed partial class LanguageServerTarget
         await document.GetSyntaxTreeAsync(cancellationToken);
 
         var text = document.Text;
-        var options = GetFormattingOptions(clientOptions, text);
         var service = document.Services.GetService<FormattingService>();
+
+        // Whatever the document's own .editorconfig says wins over both of these, which is what
+        // asking the service rather than using the baseline directly is for.
+        var baseline = GetFormattingOptions(clientOptions, text);
+        var options = service.GetOptions(document, baseline, cancellationToken);
 
         var changes = range is null
                         ? service.GetChanges(document, options, cancellationToken)
@@ -51,7 +55,9 @@ internal sealed partial class LanguageServerTarget
     }
 
     // The style is server policy; the client only has a say in the handful of values LSP defines,
-    // which are the user's editor settings for this document and so win over the defaults.
+    // which are the user's editor settings for this document and so win over the defaults. This is
+    // only the baseline: a checked-in .editorconfig belongs to everyone working on the file and
+    // outranks both.
     private Formatting.FormattingOptions GetFormattingOptions(LspFormattingOptions clientOptions, SourceText text)
     {
         var options = _options.FormattingOptions;
@@ -66,7 +72,8 @@ internal sealed partial class LanguageServerTarget
     }
 
     // Match whatever the document already uses rather than the server's platform, which would give
-    // a file mixed line endings the first time it is formatted.
+    // a file mixed line endings the first time it is formatted. An end_of_line in an .editorconfig
+    // overrides this, because that one is a decision somebody wrote down.
     private static string GetNewLine(SourceText text)
     {
         foreach (var line in text.Lines)

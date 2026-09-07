@@ -53,6 +53,7 @@ public sealed class AuthoringServicesBuilder
         AddService<CodeRefactoringService>();
         AddService<CommentingService>();
         AddService<CompletionService>();
+        AddService<FormattingOptionsResolver>();
         AddService<FormattingService>();
         AddService<HighlightingService>();
         AddService<OutliningService>();

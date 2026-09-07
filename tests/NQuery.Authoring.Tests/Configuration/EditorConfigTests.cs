@@ -592,33 +592,4 @@ public class EditorConfigTests
 
         return Parse(text, relativeFilePath).TryGetString(@"nquery_test_key", out _);
     }
-
-    private sealed class TempDirectory : IDisposable
-    {
-        public TempDirectory()
-        {
-            Root = Path.Combine(Path.GetTempPath(), $"nquery-{Guid.NewGuid():N}");
-            Directory.CreateDirectory(Root);
-        }
-
-        public string Root { get; }
-
-        public string CreateFile(string relativePath, string content)
-        {
-            var path = GetPath(relativePath);
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            File.WriteAllText(path, content);
-            return path;
-        }
-
-        public string GetPath(string relativePath)
-        {
-            return Path.Combine(Root, relativePath.Replace('/', Path.DirectorySeparatorChar));
-        }
-
-        public void Dispose()
-        {
-            Directory.Delete(Root, recursive: true);
-        }
-    }
 }

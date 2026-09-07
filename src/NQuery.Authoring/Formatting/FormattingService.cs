@@ -11,11 +11,39 @@ namespace NQuery.Authoring.Formatting;
 // Options are a parameter rather than state: this is a stateless singleton shared by every
 // document, and a host resolves whatever settings it has (an editor's per-request values, a config
 // file) before asking.
+//
+// The overloads that take options use exactly those -- a caller asking for Stacked gets Stacked,
+// whatever is on disk. Resolution only happens where a caller doesn't say, or asks for it through
+// GetOptions.
 public sealed class FormattingService
 {
+    private readonly FormattingOptionsResolver _resolver;
+
+    public FormattingService(FormattingOptionsResolver resolver)
+    {
+        _resolver = resolver;
+    }
+
     public Document Format(Document document, CancellationToken cancellationToken = default)
     {
-        return Format(document, FormattingOptions.Default, cancellationToken);
+        ThrowIfNull(document);
+
+        return Format(document, GetOptions(document, cancellationToken), cancellationToken);
+    }
+
+    public FormattingOptions GetOptions(Document document, CancellationToken cancellationToken = default)
+    {
+        return GetOptions(document, FormattingOptions.Default, cancellationToken);
+    }
+
+    // For a host that has already merged settings of its own: those are the baseline, and the
+    // resolver overrides only what it can answer for.
+    public FormattingOptions GetOptions(Document document, FormattingOptions options, CancellationToken cancellationToken = default)
+    {
+        ThrowIfNull(document);
+        ThrowIfNull(options);
+
+        return _resolver.GetOptions(document, options, cancellationToken);
     }
 
     public Document Format(Document document, FormattingOptions options, CancellationToken cancellationToken = default)

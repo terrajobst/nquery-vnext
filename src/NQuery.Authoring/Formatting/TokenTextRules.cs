@@ -2,7 +2,7 @@ using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.Formatting;
 
-// The two passes that rewrite a token's own text rather than the space around it. Both are pure
+// The passes that rewrite a token's own text rather than the space around it. All are pure
 // per-token maps, which is what lets a host ask for casing without layout, or neither.
 internal static class TokenTextRules
 {
@@ -13,6 +13,13 @@ internal static class TokenTextRules
         if (token.IsMissing || text.Length == 0)
             return text;
 
+        // A string literal is the only token whose text can span lines, and the breaks in it are
+        // breaks in this file like any other.
+        return LineBreakRules.Normalize(GetCasedText(token, options, text), options.NewLine);
+    }
+
+    private static string GetCasedText(SyntaxToken token, FormattingOptions options, string text)
+    {
         // A contextual keyword used as a keyword has had its kind rewritten by the parser, and one
         // used as a name hasn't, so the tree already answers "is this a keyword here".
         if (token.Kind.IsKeyword())

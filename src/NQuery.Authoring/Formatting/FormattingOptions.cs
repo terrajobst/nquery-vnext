@@ -166,9 +166,9 @@ public sealed record FormattingOptions
         if (editorConfig.TryGetBoolean(@"insert_final_newline", out var insertFinalNewline))
             result = result with { InsertFinalNewline = insertFinalNewline };
 
-        // This only decides what a break the formatter writes looks like. Converting the breaks
-        // already in the document is a formatter change rather than an option, so a file whose
-        // end_of_line disagrees with what it contains is not rewritten by setting this.
+        // The formatter renders every gap between two tokens from scratch, so this converts the
+        // breaks already in the document as well as the ones it adds. The exception is a break
+        // inside a token's own text -- a multi-line comment -- which is copied through.
         if (TryGetNewLine(editorConfig, out var newLine))
             result = result with { NewLine = newLine };
 

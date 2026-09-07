@@ -233,7 +233,9 @@ internal sealed class Formatter
             else
                 builder.Append(' ');
 
-            builder.Append(_text.GetText(comment.Span));
+            // A multi line comment carries its own breaks, and they are breaks in this file like
+            // any other. Its interior indentation is left alone: that is the author's layout.
+            builder.Append(LineBreakRules.Normalize(_text.GetText(comment.Span), _options.NewLine));
             position = comment.Span.End;
         }
 

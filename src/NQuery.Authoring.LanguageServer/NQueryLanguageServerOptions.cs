@@ -1,3 +1,4 @@
+using NQuery.Authoring.Formatting;
 using NQuery.Authoring.LanguageServer.Hosting;
 
 namespace NQuery.Authoring.LanguageServer;
@@ -11,7 +12,7 @@ public sealed class NQueryLanguageServerOptions
     // The language services every document in this server is analyzed with. A host that ships its
     // own providers builds its own composition; everything else here is server policy, which is
     // deliberately not part of the service set.
-    public AuthoringServices Services { get; set; } = AuthoringServices.Create();
+    public AuthoringServices Services { get; set; } = CreateDefaultServices();
 
     // The SQL layout the server formats with. LSP lets the client send only tab size, spaces vs
     // tabs, and the final newline, so everything else about style is decided here.
@@ -36,4 +37,18 @@ public sealed class NQueryLanguageServerOptions
     public int MaxRows { get; set; } = int.MaxValue;
 
     public TimeSpan ExecutionTimeout { get; set; } = TimeSpan.FromSeconds(30);
+
+    // The default composition plus the EditorConfig resolver. A language server is the one host
+    // that knows where a document lives, which is what makes it the one that can let a repository's
+    // own .editorconfig have a say -- so the file reading the authoring layer refuses to do by
+    // default is opted into here. A host supplying its own Services opts in the same way.
+    private static AuthoringServices CreateDefaultServices()
+    {
+        return AuthoringServices.Create(builder =>
+        {
+            builder.AddDefaultServices();
+            builder.RemoveServices<FormattingOptionsResolver>();
+            builder.AddService<FormattingOptionsResolver, EditorConfigFormattingOptionsResolver>();
+        });
+    }
 }

@@ -282,6 +282,9 @@ new `Document` or the underlying `TextChange`s for a host that wants edits.
 ```csharp
 public sealed class FormattingService
 {
+    public Document Format(Document document, CancellationToken ct = default);
+    public FormattingOptions GetOptions(Document document, CancellationToken ct = default);
+    public FormattingOptions GetOptions(Document document, FormattingOptions options, CancellationToken ct = default);
     public Document Format(Document document, FormattingOptions options, CancellationToken ct = default);
     public Document Format(Document document, TextSpan span, FormattingOptions options, CancellationToken ct = default);
     public ImmutableArray<TextChange> GetChanges(Document document, FormattingOptions options, CancellationToken ct = default);
@@ -312,6 +315,74 @@ presets: `Tabular` (the default -- keyword flush left, payload padded to
 `Compact` (stacked, breaking only what does not fit). `IndentSize`, `UseTabs`,
 `MaxLineLength`, `InsertFinalNewline` and `NewLine` mirror the standard
 EditorConfig properties of the same meaning.
+
+### EditorConfig
+
+`FormattingOptions.WithEditorConfig` overlays what a config actually says onto
+options a caller already has, and leaves everything it is silent about alone:
+
+| Key | Values | Property |
+| --- | --- | --- |
+| `indent_style` | `tab`, `space` | `UseTabs` |
+| `indent_size` | integer, or `tab` (resolved against `tab_width`) | `IndentSize` |
+| `max_line_length` | integer, or `off` | `MaxLineLength` |
+| `insert_final_newline` | `true`, `false` | `InsertFinalNewline` |
+| `end_of_line` | `lf`, `crlf`, `cr` | `NewLine` |
+| `nquery_style` | `tabular`, `stacked`, `compact` | the preset |
+| `nquery_keyword_column` | integer | `KeywordColumn` |
+| `nquery_select_columns` | `one_per_line`, `wrap_when_too_long` | `SelectColumns` |
+| `nquery_join_indentation` | `from_level`, `indented` | `Joins` |
+| `nquery_on_placement` | `same_line`, `own_line`, `own_line_when_multiple` | `On` |
+| `nquery_keyword_case` | `upper`, `lower`, `preserve` | `Keywords` |
+| `nquery_identifier_quoting` | `preserve`, `when_required` | `Identifiers` |
+| `nquery_max_blank_lines` | integer | `MaxBlankLines` |
+
+`nquery_style` is applied first and every other key tunes it, the same way
+`FormattingOptions.Stacked with { On = OwnLine }` reads -- it cannot be
+"whichever came last in the file", because the properties are a dictionary by the
+time the mapping sees them. It only sets the four properties a preset decides;
+everything else the caller had resolved survives. There is deliberately no
+`nquery_layout`: `LayoutStyle` is the choice the other layout options hang off,
+and picking it without its companions is what `nquery_style` exists to prevent.
+Unknown keys and unreadable values are ignored, because the file belongs to the
+repository rather than to us.
+
+`EditorConfig` itself (in `NQuery.Authoring.Configuration`) is agnostic about
+which keys exist: it resolves the sections that match a file -- walking up to the
+first config declaring `root = true`, nearer files and later sections winning,
+`unset` taking a property back out -- and exposes `TryGetString`, `TryGetInt32`
+and `TryGetBoolean` over the result. Section patterns support `*`, `**`, `?`,
+`[seq]`, `[!seq]`, `{a,b}` and escapes, matched case-insensitively; numeric ranges
+(`{1..9}`) are not implemented and stay literal.
+
+Reading files is opt-in. `FormattingOptionsResolver` is the seam:
+
+```csharp
+public class FormattingOptionsResolver
+{
+    public virtual FormattingOptions GetOptions(Document document, FormattingOptions options, CancellationToken ct = default);
+}
+```
+
+The default returns what it was given, so the default composition does no I/O.
+`EditorConfigFormattingOptionsResolver` walks up from `Document.FilePath` (and
+returns the baseline unchanged for a document that has none). A host swaps it in:
+
+```csharp
+AuthoringServices.Create(builder =>
+{
+    builder.AddDefaultServices();
+    builder.RemoveServices<FormattingOptionsResolver>();
+    builder.AddService<FormattingOptionsResolver, EditorConfigFormattingOptionsResolver>();
+});
+```
+
+The language server does exactly that. Because the options going in are the
+baseline and a resolver overrides only what it can answer for, precedence falls
+out of the call site rather than needing a rule: the server merges its configured
+style with the values the LSP request carries, hands that to
+`FormattingService.GetOptions`, and the document's own `.editorconfig` outranks
+both.
 
 ### Symbol Markup
 
