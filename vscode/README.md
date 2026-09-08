@@ -136,11 +136,10 @@ unaffected either way. What the formatting looks like comes from the server and 
 `docs/authoring/authoring.md`.
 
 Two keystrokes format as you type. A `)` reformats what it closed — the argument list, subquery
-or derived table you were in the middle of — and Enter reformats the line it just ended, its
-indentation included. Ending a line that closes a `CASE` lays out the whole expression rather than
-that one line, which is as close to formatting on `END` as a single-character trigger allows.
-Nothing else is touched, and Enter will never pull the line back up onto the previous one,
-whatever the formatter would rather it did.
+or derived table you were in the middle of. Enter reformats whatever the line you just ended
+finished: a `CASE`, a select column, a clause, a whole query — the largest thing that ends there,
+across every line it occupies, not just the last one. If the line ended in the middle of
+everything, nothing is formatted, and the newline you just typed is never taken back.
 
 This is contributed the same way as format on save, as `"[nquery]": { "editor.formatOnType":
 true }`, and rests on it: both keystrokes format the line or construct against a document they

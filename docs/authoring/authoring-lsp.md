@@ -203,12 +203,19 @@ something is finished enough to format:
   only character in this grammar that does. The parenthesis the cursor sits behind is looked up
   and the node it belongs to is formatted. A `)` that closes nothing, because it is inside a
   string or because the edit has not landed yet, formats nothing.
-- **`\n`** ends a line. What gets formatted is the line the newline ended, which is the one above
-  the cursor, never the empty one the cursor landed on -- unless that line closes a `CASE`, in
-  which case the whole expression is, labels and all. `END` would be the honest trigger for that
-  and cannot be one: a trigger is a single character, so it would have to register on `d` and
-  answer for every identifier that ends in one. Ending the line is the next moment the same thing
-  is true, and noticing it there costs nothing.
+- **`\n`** ends a line, and with it whatever construct the line finished. The last token on the
+  line above the cursor is found, and its ancestors are walked outwards for as long as they still
+  end on that line; the largest one is what gets formatted, over its full span. The line is only
+  how the construct is found -- it is not the extent of the work, which is the point, since a
+  construct closing on this line was laid out across the ones above it too. `END` closing a `CASE`,
+  a select column, a whole query all fall out of the same walk, and nothing has to know which
+  constructs exist. `END` would otherwise want to be a trigger character of its own and cannot be:
+  a trigger is a single character, so it would have to register on `d` and answer for every
+  identifier that ends in one.
+
+  When every ancestor runs on past the line, the line finished nothing and nothing is formatted.
+  That is not merely the cautious answer: formatting a construct still being typed would pull the
+  rest of it up onto this line, taking the newline with it.
 
 All three requests format the whole document and then keep the changes that were actually asked
 about, because what a line is indented to depends on everything enclosing it. The two explicit
@@ -218,15 +225,14 @@ for them:
 | Trigger | Keeps                                                                        |
 | ------- | ---------------------------------------------------------------------------- |
 | `)`     | Strictly inside the node -- not the whitespace in front of the construct, and not the final newline a construct ending the document would drag in. |
-| `\n`    | Inside the completed line, plus the line's own indentation -- and that only while it stays an indent. |
-| `\n` closing a `CASE` | Strictly inside the `CASE`, exactly as for `)`. |
+| `\n`    | Within the full span of the construct that ended, so its own indentation is in scope along with everything it contains. Past its last token only a change that is still a line break, because that is where the newline just typed lives -- the full span reaches over it, since the lexer hands a line's ending to the token it follows. |
 
-The line's indentation lives in the gap in front of it, which starts on the line before, so it is
-the one change either trigger reaches backwards for. An indent that came out wrong is much of what
-Enter is pressed to fix. But a replacement with no newline left in it would pull the line up onto
-the previous one, so that one is dropped: pressing Enter is not an invitation to undo the Enter.
-By the same reasoning the gap *after* the last token on the line is never touched -- that is where
-the newline just typed lives.
+Both filters are containments rather than strictly-inside comparisons, because a construct's first
+and last tokens are as much a part of it as anything between them: rewriting a token's text is a
+change spanning exactly that token, so a strict comparison silently drops both ends -- and a lower
+case `case ... end` is precisely the pair it would leave standing. What containment lets back in is
+a gap that happens to be empty sitting on a boundary, which is a change to what is beside the
+construct rather than to it, so those are excluded by position.
 
 The changes that are kept still assume the rest of the document is formatted, so a column can be
 computed for text that is not going to be rewritten -- the standing bargain of formatting part of

@@ -59,49 +59,56 @@ internal sealed partial class LanguageServerTarget
         return await FormatAsync(parameters.TextDocument.Uri, parameters.Options, keep, cancellationToken);
     }
 
-    // The line the newline just ended, which is the one above the cursor.
+    // What the completed line finished: the largest node that ends on it. Walking up from the last
+    // token on the line, rather than looking at the line's own text, is what makes this general --
+    // a CASE closing on the line, a clause, a whole query, all fall out of the same walk, and
+    // nothing here has to know which constructs exist.
+    //
+    // The region is that node's full span, so its leading indentation and everything it contains
+    // are in scope. The line is only how the node is found; it is not the extent of the work, which
+    // is the point: a construct that closes on this line was laid out across the ones above it too.
     private static Func<TextChange, bool>? GetCompletedLineFilter(SyntaxTree syntaxTree, SourceText text, int cursorLine)
     {
         if (cursorLine <= 0 || cursorLine >= text.Lines.Count)
             return null;
 
         var line = text.Lines[cursorLine - 1].Span;
+        var token = syntaxTree.Root.FindTokenOnLeft(line.End);
 
-        // A CASE closing on that line is a construct finishing, not merely a line finishing, so it
-        // is formatted the way a ')' formats what it closes -- the whole expression, indentation of
-        // its labels included, rather than the one line END happens to sit on.
-        if (GetCaseClosedOn(syntaxTree, line) is { } caseExpression)
-            return Inside(caseExpression.Span);
+        // A blank line, or one carrying nothing but trivia, finished nothing.
+        if (token.IsMissing || token.Span.End <= line.Start)
+            return null;
+
+        SyntaxNode? node = null;
+        for (var candidate = token.Parent; candidate is not null && candidate.Span.End <= line.End; candidate = candidate.Parent)
+            node = candidate;
+
+        // Every node the last token belongs to runs on past this line, so the line ended in the
+        // middle of all of them and finished nothing. Leaving it alone is not just the conservative
+        // answer, it is the correct one: formatting a construct that is still being typed would
+        // pull the rest of it up onto this line, newline and all.
+        if (node is null)
+            return null;
+
+        var span = node.Span;
+        var full = node.FullSpan;
 
         return c =>
         {
-            // Everything the line holds outright: its spacing, its casing, and a break the
-            // formatter wants inside it. The gap after the last token is not one of these -- that
-            // is where the newline just typed lives, and rendering it is how the formatter would
-            // take it straight back.
-            if (c.Span.Start >= line.Start && c.Span.End <= line.End)
-                return true;
+            if (c.Span.Start < full.Start || c.Span.End > full.End)
+                return false;
 
-            // The line's own indentation, which sits in the gap in front of it and so starts on the
-            // line before. An indent that came out wrong is much of what Enter is pressed to fix,
-            // so this is worth reaching back for -- but only while it stays an indent. A
-            // replacement with no newline left in it would pull the line up onto the previous one,
-            // and moving text that is already placed is the opposite of what Enter asked for.
-            return c.Span.Start < line.Start &&
-                   c.Span.End >= line.Start &&
-                   c.Span.End <= line.End &&
-                   c.NewText.Contains('\n');
+            // Past the node's last token is where the newline just typed lives -- the full span
+            // reaches over it, because the lexer hands a line's ending to the token it follows.
+            // Rendering that gap is how the formatter would take the newline straight back, so it
+            // may only turn into something that is still a line break.
+            if (c.Span.Start >= span.End)
+                return c.NewText.Contains('\n');
+
+            return true;
         };
     }
 
-    // What the parenthesis the user just typed closes. The cursor sits immediately after it, so the
-    // token on the left is that parenthesis -- unless it isn't, because a client may trigger on a
-    // ')' inside a string or a comment, or against a document version where the edit has not landed
-    // yet. Either way the answer is to format nothing rather than to guess at a construct.
-    //
-    // Formatting the parent node rather than the parenthesis pair is what makes the result useful:
-    // the pair is just two characters, while the node is the argument list or subquery that was
-    // being typed, and its layout is the thing that was left half-done.
     private static Func<TextChange, bool>? GetJustClosedFilter(SyntaxTree syntaxTree, int position)
     {
         var token = syntaxTree.Root.FindTokenOnLeft(position);
@@ -113,28 +120,6 @@ internal sealed partial class LanguageServerTarget
             return null;
 
         return Inside(node.Span);
-    }
-
-    // The CASE expression an END on this line closes, if there is one. END would be the natural
-    // trigger character for that, and it can't be: a trigger is a single character, so this would
-    // have to register on 'd' and answer for every identifier that ends in one. Ending the line is
-    // the next moment the same thing is true, and it costs nothing extra to notice it there.
-    //
-    // Searched from the end of the line backwards because the interesting END is the last one on
-    // it, and it need not be the final token -- END AS Category is how these usually read.
-    private static SyntaxNode? GetCaseClosedOn(SyntaxTree syntaxTree, TextSpan line)
-    {
-        var token = syntaxTree.Root.FindTokenOnLeft(line.End);
-
-        while (token is not null && token.Span.End > line.Start)
-        {
-            if (token.Kind == SyntaxKind.EndKeyword && !token.IsMissing && token.Parent is CaseExpressionSyntax caseExpression)
-                return caseExpression;
-
-            token = token.GetPreviousToken();
-        }
-
-        return null;
     }
 
     // The construct's own text and nothing on either side of it: not the whitespace in front of it,

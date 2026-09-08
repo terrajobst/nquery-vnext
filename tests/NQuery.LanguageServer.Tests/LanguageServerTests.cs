@@ -487,12 +487,12 @@ public sealed class LanguageServerTests
     }
 
     [Fact]
-    public async Task OnTypeFormatting_OnNewLineNeverTakesTheNewLineBack()
+    public async Task OnTypeFormatting_OnNewLineReflowsTheConstructThatEnded()
     {
         await using var harness = await StartAsync();
 
-        // The formatter would put these two on one line, and reindenting the second is how it would
-        // do it. Pressing Enter is not an invitation to undo the Enter.
+        // What ended here is the whole query, which spans both lines, so laying it out means
+        // putting them back together. Enter finishes a construct; the line is only how it is found.
         const string text = "select\n1\n";
         var opened = harness.ExpectDiagnostics(DocumentUri);
         await harness.OpenAsync(DocumentUri, text);
@@ -508,16 +508,72 @@ public sealed class LanguageServerTests
                 Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
             });
 
-        Assert.Equal(text, Apply(text, edits));
+        Assert.Equal("SELECT  1\n", Apply(text, edits));
     }
 
     [Fact]
-    public async Task OnTypeFormatting_OnNewLineFormatsACaseThatJustClosed()
+    public async Task OnTypeFormatting_OnNewLineKeepsTheNewLineThatWasJustTyped()
     {
         await using var harness = await StartAsync();
 
-        // END is what closes this, and the line ending is when that is noticed -- so the whole
-        // expression is laid out, not just the line END sits on.
+        // The CASE ends on that line but its select column does not, so the alias below is the very
+        // next token and the formatter would rather have it up here. That is the newline that was
+        // just typed, and it stays.
+        const string text = "SELECT  case when 1 = 1 then 2 else 3 end\n" +
+                            "AS Category\n" +
+                            "FROM    Employees";
+
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(1, 0),
+                Ch = "\n",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.Equal("SELECT  CASE WHEN 1 = 1 THEN 2 ELSE 3 END\n" +
+                     "AS Category\n" +
+                     "FROM    Employees", Apply(text, edits));
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_OnNewLineDoesNothingWhenTheLineEndsMidConstruct()
+    {
+        await using var harness = await StartAsync();
+
+        // Every node the FROM belongs to runs on past its line, so nothing finished. Formatting
+        // here would pull Customers up onto the FROM line -- undoing the Enter outright.
+        const string text = "SELECT  1\nFROM\nCustomers";
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]?>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(2, 0),
+                Ch = "\n",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.Null(edits);
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_OnNewLineFormatsACaseThatEndedOnIt()
+    {
+        await using var harness = await StartAsync();
+
+        // The CASE is the largest node ending on that line, so the whole expression is laid out --
+        // its labels included -- rather than only the line END sits on.
         const string text = "SELECT  CASE\n" +
                             "WHEN e.City = 'London' AND e.Country = 'UK' THEN 'Local'\n" +
                             "WHEN e.City = 'Seattle' AND e.Country = 'USA' THEN 'Home'\n" +
@@ -546,10 +602,12 @@ public sealed class LanguageServerTests
     }
 
     [Fact]
-    public async Task OnTypeFormatting_OnNewLineFindsACaseThatIsNotTheLastTokenOnTheLine()
+    public async Task OnTypeFormatting_OnNewLineReachesPastTheConstructToTheOneThatEnded()
     {
         await using var harness = await StartAsync();
 
+        // END is not the last token here, so the CASE is not the node that ends the line -- the
+        // select column does, and the column is what gets laid out. Nothing looks for an END.
         const string text = "SELECT  CASE\n" +
                             "WHEN e.City = 'London' AND e.Country = 'UK' THEN 'Local'\n" +
                             "WHEN e.City = 'Seattle' AND e.Country = 'USA' THEN 'Home'\n" +
