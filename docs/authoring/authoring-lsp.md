@@ -205,7 +205,7 @@ something is finished enough to format:
   string or because the edit has not landed yet, formats nothing.
 - **`\n`** ends a line, and with it whatever construct the line finished. The last token on the
   line above the cursor is found, and its ancestors are walked outwards for as long as they still
-  end on that line; the largest one is what gets formatted, over its full span. The line is only
+  end on that line; the largest one is what gets formatted, over its span. The line is only
   how the construct is found -- it is not the extent of the work, which is the point, since a
   construct closing on this line was laid out across the ones above it too. `END` closing a `CASE`,
   a select column, a whole query all fall out of the same walk, and nothing has to know which
@@ -225,7 +225,15 @@ for them:
 | Trigger | Keeps                                                                        |
 | ------- | ---------------------------------------------------------------------------- |
 | `)`     | Strictly inside the node -- not the whitespace in front of the construct, and not the final newline a construct ending the document would drag in. |
-| `\n`    | Within the full span of the construct that ended, so its own indentation is in scope along with everything it contains. Past its last token only a change that is still a line break, because that is where the newline just typed lives -- the full span reaches over it, since the lexer hands a line's ending to the token it follows. |
+| `\n`    | Inside the construct that ended, on the same terms.                          |
+
+Neither uses the node's *full* span, which looks like the better answer and isn't. It comes down to
+where the lexer splits trivia: a line's ending belongs to the token it follows, so a node's leading
+trivia holds only the indent after that newline, while the formatter's change for that indent is the
+whole gap spanning the newline -- which begins before the full span and is rejected either way. Full
+span reaches further only at the far end, over the newline that was just typed, and admits exactly
+one change: the gap after the construct, which *is* that newline. Excluding it costs nothing and
+saves having a rule to protect it.
 
 Both filters are containments rather than strictly-inside comparisons, because a construct's first
 and last tokens are as much a part of it as anything between them: rewriting a token's text is a

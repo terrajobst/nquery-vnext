@@ -64,9 +64,16 @@ internal sealed partial class LanguageServerTarget
     // a CASE closing on the line, a clause, a whole query, all fall out of the same walk, and
     // nothing here has to know which constructs exist.
     //
-    // The region is that node's full span, so its leading indentation and everything it contains
-    // are in scope. The line is only how the node is found; it is not the extent of the work, which
-    // is the point: a construct that closes on this line was laid out across the ones above it too.
+    // The line is only how the node is found; it is not the extent of the work, which is the point:
+    // a construct that closes on this line was laid out across the ones above it too.
+    //
+    // The region is the node's span rather than its full span. Full span looks like the better
+    // answer and isn't, because of where the lexer splits trivia: a line's ending goes to the token
+    // it follows, so a node's leading trivia is only the indent after that newline, while the
+    // formatter's change for that indent is the whole gap spanning the newline -- which starts
+    // before the full span and is rejected by either. Full span reaches further at the other end
+    // only, over the newline that was just typed, and admits exactly one change: the gap after the
+    // construct, which is that newline. Excluding it costs nothing and spares a rule protecting it.
     private static Func<TextChange, bool>? GetCompletedLineFilter(SyntaxTree syntaxTree, SourceText text, int cursorLine)
     {
         if (cursorLine <= 0 || cursorLine >= text.Lines.Count)
@@ -90,23 +97,7 @@ internal sealed partial class LanguageServerTarget
         if (node is null)
             return null;
 
-        var span = node.Span;
-        var full = node.FullSpan;
-
-        return c =>
-        {
-            if (c.Span.Start < full.Start || c.Span.End > full.End)
-                return false;
-
-            // Past the node's last token is where the newline just typed lives -- the full span
-            // reaches over it, because the lexer hands a line's ending to the token it follows.
-            // Rendering that gap is how the formatter would take the newline straight back, so it
-            // may only turn into something that is still a line break.
-            if (c.Span.Start >= span.End)
-                return c.NewText.Contains('\n');
-
-            return true;
-        };
+        return Inside(node.Span);
     }
 
     private static Func<TextChange, bool>? GetJustClosedFilter(SyntaxTree syntaxTree, int position)
