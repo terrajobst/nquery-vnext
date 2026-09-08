@@ -324,9 +324,6 @@ structurally.
       other list wraps on demand. Splitting them is a rename away.
     - **Format on type.** `onTypeFormatting` over the just-closed construct would
       reuse the range path unchanged.
-    - Wrapping only breaks lists, argument lists, CASE, and AND/OR chains. A long
-      arithmetic or comparison expression still runs off the line; giving those
-      groups of their own is additive.
 * Add a `RenameService`. `SymbolSearchService.FindUsages` already produces the
   definition and reference spans, so the mechanical edit is nearly free; what
   makes rename a real feature rather than a search-and-replace is everything

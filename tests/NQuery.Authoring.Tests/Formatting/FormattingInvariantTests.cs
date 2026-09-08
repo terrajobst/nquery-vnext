@@ -132,6 +132,10 @@ public class FormattingInvariantTests : FormattingTests
             @"-- leading" + "\n" + @"SELECT 1 -- trailing" + "\n" + @"/* block */ FROM Employees",
             @"SELECT 1" + "\n\n\n" + @"FROM Employees",
             @"SELECT     1     ,     2     FROM     Employees",
+            @"SELECT od.UnitPrice * od.Quantity * (1 - od.Discount) + od.Freight AS Total FROM Order_Details od",
+            @"SELECT 1 FROM Employees e WHERE e.FirstName + ' ' + e.LastName + ' of ' + e.City = 'Nancy Davolio of Seattle'",
+            @"SELECT 1 FROM Employees e WHERE e.ReportsTo + e.EmployeeID * 2 > e.Salary - 100000 AND e.City = 'London'",
+            @"SELECT 1 /* inline */ + 2 * /* another */ 3 FROM Employees",
         ];
     }
 }

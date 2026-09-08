@@ -183,6 +183,42 @@ public class FormattingOptionTests : FormattingTests
     }
 
     [Fact]
+    public void MaxLineLength_BreaksArithmeticWithLeadingOperators()
+    {
+        var options = FormattingOptions.Tabular with { MaxLineLength = 40 };
+
+        var query = "SELECT od.UnitPrice * od.Quantity * (1 - od.Discount) + od.Freight AS Total FROM Order_Details od";
+
+        var expected = """
+            SELECT  od.UnitPrice * od.Quantity
+                    * (1 - od.Discount)
+                    + od.Freight AS Total
+            FROM    Order_Details od
+            """;
+
+        AssertFormats(query, expected, options);
+    }
+
+    // The operators break outermost first because their groups nest the way precedence does, so what
+    // binds tighter than the operator that gave way stays on the line with its operands.
+    [Fact]
+    public void MaxLineLength_BreaksComparisonsBeforeWhatBindsTighter()
+    {
+        var options = FormattingOptions.Tabular with { MaxLineLength = 40 };
+
+        var query = "SELECT 1 FROM Employees e WHERE e.ReportsTo + e.EmployeeID * 2 > e.Salary - 100000";
+
+        var expected = """
+            SELECT  1
+            FROM    Employees e
+            WHERE   e.ReportsTo + e.EmployeeID * 2
+                    > e.Salary - 100000
+            """;
+
+        AssertFormats(query, expected, options);
+    }
+
+    [Fact]
     public void IndentSize_IsHonored()
     {
         var options = FormattingOptions.Stacked with { IndentSize = 2 };

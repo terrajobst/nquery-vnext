@@ -43,6 +43,20 @@ public class FormattingCommentTests : FormattingTests
             """);
     }
 
+    // Staying inline is not the same as being free: the comment is on the line, so it counts against
+    // the line's budget like anything else on it.
+    [Fact]
+    public void Comments_InlineBlockCommentsCountTowardsTheLineLength()
+    {
+        var options = FormattingOptions.Tabular with { MaxLineLength = 40 };
+
+        AssertFormats("SELECT 1 /* a very long comment here */ + 2 FROM Employees", """
+            SELECT  1 /* a very long comment here */
+                    + 2
+            FROM    Employees
+            """, options);
+    }
+
     [Fact]
     public void Comments_AtTheStartOfTheDocumentKeepTheirPosition()
     {

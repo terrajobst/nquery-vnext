@@ -314,8 +314,11 @@ internal sealed class LayoutWalker
     {
         switch (node)
         {
-            case BinaryExpressionSyntax binary when IsLogicalOperator(binary.BinaryOperatorToken):
-                VisitLogicalChain(binary, lineIndent);
+            case BinaryExpressionSyntax logical when IsLogicalOperator(logical.BinaryOperatorToken):
+                VisitLogicalChain(logical, lineIndent);
+                break;
+            case BinaryExpressionSyntax binary:
+                VisitBinaryExpression(binary, lineIndent);
                 break;
             case CaseExpressionSyntax caseExpression:
                 VisitCaseExpression(caseExpression, lineIndent);
@@ -370,6 +373,29 @@ internal sealed class LayoutWalker
         {
             VisitExpression(node, lineIndent);
         }
+    }
+
+    // Arithmetic and comparison wrap the way a logical chain does -- the operator leads its line --
+    // except that every operator keeps a group of its own rather than a chain being flattened into
+    // one. The groups then nest the way precedence does, so the loosest-binding operator is the
+    // outermost group and the first to break, and an operand that binds tighter stays on one line
+    // until it has to give:
+    //
+    //     a * b + c
+    //     + d
+    //
+    // That is also what keeps this out of the precedence business. Flattening a chain means knowing
+    // which neighbours bind equally, and the parser's table is internal to NQuery -- but the shape
+    // of the tree already says it, so nesting the groups says it too without a second copy here.
+    private void VisitBinaryExpression(BinaryExpressionSyntax node, int lineIndent)
+    {
+        var restore = PushGroup(node);
+
+        VisitExpression(node.Left, lineIndent);
+        SetGap(node.BinaryOperatorToken, GapKind.SoftLine, lineIndent);
+        VisitExpression(node.Right, lineIndent);
+
+        _group = restore;
     }
 
     private void VisitCaseExpression(CaseExpressionSyntax node, int lineIndent)

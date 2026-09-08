@@ -303,10 +303,23 @@ Layout decisions come from two places. `SpacingRules` answers what goes between 
 token pair, and `LayoutWalker` overrides that where structure demands a line
 break, an indent, or the tabular pad. An unresolved break is a *soft* line: it
 renders as a break only when the enclosing group -- an argument list, a
-subquery, a CASE, a chain of ANDs -- does not fit inside `MaxLineLength`.
+subquery, a CASE, a chain of ANDs, an operator and its operands -- does not fit
+inside `MaxLineLength`.
+
+An `AND`/`OR` chain is one group, so it breaks as a unit. Every other operator
+gets a group of its own instead, which nests them the way precedence does: the
+loosest-binding operator is the outermost group and so the first to give, and
+what binds tighter stays on one line until it has to break in turn.
+
+```
+od.UnitPrice * od.Quantity
+* (1 - od.Discount)
++ od.Freight
+```
 
 Comments are never moved, only re-indented, and a single line comment always ends
-its line. A region around a missing or skipped token is copied through verbatim,
+its line. A block comment written on one line does not force its group to break --
+it is simply more text on the line, and counts against `MaxLineLength` as such. A region around a missing or skipped token is copied through verbatim,
 so a document that does not parse still formats everywhere else.
 
 `FormattingOptions` is a parameter rather than service state, and ships as three

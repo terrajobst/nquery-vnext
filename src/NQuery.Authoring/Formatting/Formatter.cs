@@ -346,12 +346,32 @@ internal sealed class Formatter
                             ? SpacingRules.GetGap(_tokens[i - 1], _tokens[i]).Kind
                             : gap.Kind;
 
-                // A break the group can't get rid of, or a comment that forces one, means the group
-                // was never going to fit on one line no matter how wide the budget is.
-                if (kind == GapKind.Line || HasComment(i))
+                // A break the group can't get rid of means it was never going to fit on one line no
+                // matter how wide the budget is.
+                if (kind == GapKind.Line)
                     return false;
 
-                width += kind == GapKind.None ? 0 : 1;
+                var comments = 0;
+                var commentWidth = 0;
+
+                foreach (var comment in GetGapComments(i))
+                {
+                    // A comment doesn't have to cost the group its one line -- a block comment
+                    // written on one line is just more text on it. One that carries a break does:
+                    // a single line comment always ends its line, and a block comment written
+                    // across several brings its own.
+                    if (comment.Kind == SyntaxKind.SingleLineCommentTrivia || comment.Text.Contains('\n'))
+                        return false;
+
+                    comments++;
+                    commentWidth += comment.Text.Length;
+                }
+
+                // Rendered inline, each comment is separated from what is on either side of it by a
+                // space, so n of them cost n + 1 spaces however the gap would have been spaced.
+                width += comments == 0
+                            ? kind == GapKind.None ? 0 : 1
+                            : comments + 1 + commentWidth;
             }
 
             width += _tokenTexts[i].Length;
@@ -363,24 +383,26 @@ internal sealed class Formatter
         return true;
     }
 
-    private bool HasComment(int index)
+    // The comments that fall in the gap in front of a token, in the order they are rendered. This is
+    // the unfiltered counterpart of GetComments: measuring a group happens before there is a gap
+    // span to filter against, and a comment attached to one of these tokens is in the gap by
+    // construction anyway.
+    private IEnumerable<SyntaxTrivia> GetGapComments(int index)
     {
-        foreach (var t in _tokens[index].LeadingTrivia)
-        {
-            if (t.Kind.IsComment())
-                return true;
-        }
-
         if (index > 0)
         {
             foreach (var t in _tokens[index - 1].TrailingTrivia)
             {
                 if (t.Kind.IsComment())
-                    return true;
+                    yield return t;
             }
         }
 
-        return false;
+        foreach (var t in _tokens[index].LeadingTrivia)
+        {
+            if (t.Kind.IsComment())
+                yield return t;
+        }
     }
 
     // -- Column tracking ----------------------------------------------------------------------
