@@ -75,7 +75,8 @@
     "configurationDefaults": {
       "[nquery]": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "nquery.vscode-nquery"
+        "editor.defaultFormatter": "nquery.vscode-nquery",
+        "editor.inlineSuggest.enabled": false
       }
     },
     "jsonValidation": [

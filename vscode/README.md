@@ -135,6 +135,14 @@ unaffected either way. What the formatting looks like comes from the server and 
 `.editorconfig` above the file — see the formatter's EditorConfig keys in
 `docs/authoring/authoring.md`.
 
+AI inline suggestions are off in these files, contributed the same way: `"[nquery]":
+{ "editor.inlineSuggest.enabled": false }`. Ghost text competes with the server for the Tab key,
+and it is the one guessing — completion here is driven by the catalog the project actually names,
+so it knows the tables and columns in scope. `"[nquery]": { "editor.inlineSuggest.enabled": true }`
+in your settings turns it back on. This is language-scoped and touches nothing outside `.nql` and
+`.nqe`; an assistant that proposes edits through some other channel has its own per-language
+switch, which for Copilot is `github.copilot.enable`.
+
 ## Code actions
 
 The lightbulb offers NQuery's quick fixes and refactorings — adding a missing `AS`, expanding a
