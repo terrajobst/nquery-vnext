@@ -2,6 +2,7 @@ using NQuery.Authoring.Formatting;
 using NQuery.Authoring.LanguageServer.Mapping;
 using NQuery.Authoring.LanguageServer.Protocol;
 using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Syntax;
 using NQuery.CodeAnalysis.Text;
 
 using StreamJsonRpc;
@@ -49,7 +50,7 @@ internal sealed partial class LanguageServerTarget
         // exactly which changes it will take, and range formatting's "anything that touches the
         // span" is far too generous for either of them.
         var keep = parameters.Ch.Contains('\n')
-                    ? GetCompletedLineFilter(document.Text, parameters.Position.Line)
+                    ? GetCompletedLineFilter(syntaxTree, document.Text, parameters.Position.Line)
                     : GetJustClosedFilter(syntaxTree, document.Text.ToOffset(parameters.Position));
 
         if (keep is null)
@@ -59,12 +60,18 @@ internal sealed partial class LanguageServerTarget
     }
 
     // The line the newline just ended, which is the one above the cursor.
-    private static Func<TextChange, bool>? GetCompletedLineFilter(SourceText text, int cursorLine)
+    private static Func<TextChange, bool>? GetCompletedLineFilter(SyntaxTree syntaxTree, SourceText text, int cursorLine)
     {
         if (cursorLine <= 0 || cursorLine >= text.Lines.Count)
             return null;
 
         var line = text.Lines[cursorLine - 1].Span;
+
+        // A CASE closing on that line is a construct finishing, not merely a line finishing, so it
+        // is formatted the way a ')' formats what it closes -- the whole expression, indentation of
+        // its labels included, rather than the one line END happens to sit on.
+        if (GetCaseClosedOn(syntaxTree, line) is { } caseExpression)
+            return Inside(caseExpression.Span);
 
         return c =>
         {
@@ -105,9 +112,36 @@ internal sealed partial class LanguageServerTarget
         if (token.Span.End != position || token.Parent is not { } node)
             return null;
 
-        // Strictly inside the construct: not the whitespace in front of it, and not the final
-        // newline, which a construct ending the document would otherwise drag in.
-        var span = node.Span;
+        return Inside(node.Span);
+    }
+
+    // The CASE expression an END on this line closes, if there is one. END would be the natural
+    // trigger character for that, and it can't be: a trigger is a single character, so this would
+    // have to register on 'd' and answer for every identifier that ends in one. Ending the line is
+    // the next moment the same thing is true, and it costs nothing extra to notice it there.
+    //
+    // Searched from the end of the line backwards because the interesting END is the last one on
+    // it, and it need not be the final token -- END AS Category is how these usually read.
+    private static SyntaxNode? GetCaseClosedOn(SyntaxTree syntaxTree, TextSpan line)
+    {
+        var token = syntaxTree.Root.FindTokenOnLeft(line.End);
+
+        while (token is not null && token.Span.End > line.Start)
+        {
+            if (token.Kind == SyntaxKind.EndKeyword && !token.IsMissing && token.Parent is CaseExpressionSyntax caseExpression)
+                return caseExpression;
+
+            token = token.GetPreviousToken();
+        }
+
+        return null;
+    }
+
+    // Strictly inside the construct: not the whitespace in front of it, not the final newline that
+    // a construct ending the document would otherwise drag in, and -- when a keystroke put the
+    // cursor past it -- not the newline that was just typed either.
+    private static Func<TextChange, bool> Inside(TextSpan span)
+    {
         return c => c.Span.Start > span.Start && c.Span.End < span.End;
     }
 

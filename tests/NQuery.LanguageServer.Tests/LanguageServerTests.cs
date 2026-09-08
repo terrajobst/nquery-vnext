@@ -512,6 +512,72 @@ public sealed class LanguageServerTests
     }
 
     [Fact]
+    public async Task OnTypeFormatting_OnNewLineFormatsACaseThatJustClosed()
+    {
+        await using var harness = await StartAsync();
+
+        // END is what closes this, and the line ending is when that is noticed -- so the whole
+        // expression is laid out, not just the line END sits on.
+        const string text = "SELECT  CASE\n" +
+                            "WHEN e.City = 'London' AND e.Country = 'UK' THEN 'Local'\n" +
+                            "WHEN e.City = 'Seattle' AND e.Country = 'USA' THEN 'Home'\n" +
+                            "ELSE 'Other'\n" +
+                            "END\n";
+
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(5, 0),
+                Ch = "\n",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.Equal("SELECT  CASE\n" +
+                     "            WHEN e.City = 'London' AND e.Country = 'UK' THEN 'Local'\n" +
+                     "            WHEN e.City = 'Seattle' AND e.Country = 'USA' THEN 'Home'\n" +
+                     "            ELSE 'Other'\n" +
+                     "        END\n", Apply(text, edits));
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_OnNewLineFindsACaseThatIsNotTheLastTokenOnTheLine()
+    {
+        await using var harness = await StartAsync();
+
+        const string text = "SELECT  CASE\n" +
+                            "WHEN e.City = 'London' AND e.Country = 'UK' THEN 'Local'\n" +
+                            "WHEN e.City = 'Seattle' AND e.Country = 'USA' THEN 'Home'\n" +
+                            "ELSE 'Other'\n" +
+                            "END AS Locality\n";
+
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(5, 0),
+                Ch = "\n",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.Equal("SELECT  CASE\n" +
+                     "            WHEN e.City = 'London' AND e.Country = 'UK' THEN 'Local'\n" +
+                     "            WHEN e.City = 'Seattle' AND e.Country = 'USA' THEN 'Home'\n" +
+                     "            ELSE 'Other'\n" +
+                     "        END AS Locality\n", Apply(text, edits));
+    }
+
+    [Fact]
     public async Task OnTypeFormatting_ReturnsNothingWhenNothingWasClosed()
     {
         await using var harness = await StartAsync();

@@ -150,13 +150,14 @@ internal sealed partial class LanguageServerTarget : ILanguageServerHost
                 // The closing parenthesis is the one character in this grammar that ends a construct
                 // outright -- an argument list, a subquery, a derived table -- so there is something
                 // complete to format and no risk of reformatting a clause the user is still in the
-                // middle of typing. END closes a CASE just as definitely, but a trigger is a single
-                // character and 'D' is not one.
+                // middle of typing.
                 FirstTriggerCharacter = @")",
 
                 // Enter ends a line, which is the other moment something is finished enough to
                 // format. What gets formatted is the line it ended, never the empty one the cursor
-                // landed on.
+                // landed on -- or, when that line closes a CASE, the whole expression. END would be
+                // the honest trigger for that one, and cannot be: a trigger is a single character,
+                // so it would have to register on 'd' and answer for every identifier ending in one.
                 MoreTriggerCharacter = ["\n"]
             },
             CodeActionProvider = new CodeActionOptions

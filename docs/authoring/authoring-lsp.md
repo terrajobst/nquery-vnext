@@ -204,7 +204,11 @@ something is finished enough to format:
   and the node it belongs to is formatted. A `)` that closes nothing, because it is inside a
   string or because the edit has not landed yet, formats nothing.
 - **`\n`** ends a line. What gets formatted is the line the newline ended, which is the one above
-  the cursor, never the empty one the cursor landed on.
+  the cursor, never the empty one the cursor landed on -- unless that line closes a `CASE`, in
+  which case the whole expression is, labels and all. `END` would be the honest trigger for that
+  and cannot be one: a trigger is a single character, so it would have to register on `d` and
+  answer for every identifier that ends in one. Ending the line is the next moment the same thing
+  is true, and noticing it there costs nothing.
 
 All three requests format the whole document and then keep the changes that were actually asked
 about, because what a line is indented to depends on everything enclosing it. The two explicit
@@ -215,6 +219,7 @@ for them:
 | ------- | ---------------------------------------------------------------------------- |
 | `)`     | Strictly inside the node -- not the whitespace in front of the construct, and not the final newline a construct ending the document would drag in. |
 | `\n`    | Inside the completed line, plus the line's own indentation -- and that only while it stays an indent. |
+| `\n` closing a `CASE` | Strictly inside the `CASE`, exactly as for `)`. |
 
 The line's indentation lives in the gap in front of it, which starts on the line before, so it is
 the one change either trigger reaches backwards for. An indent that came out wrong is much of what
