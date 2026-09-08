@@ -577,6 +577,43 @@ public sealed class LanguageServerTests
                      "        END AS Locality\n", Apply(text, edits));
     }
 
+    // A construct's first and last tokens are part of it, and rewriting a token's text is a change
+    // spanning exactly that token -- so these two are what a filter that reaches only strictly
+    // inside the construct silently leaves behind.
+    [Fact]
+    public async Task OnTypeFormatting_OnNewLineCasesTheCaseAndEndKeywordsThemselves()
+    {
+        await using var harness = await StartAsync();
+
+        const string text = "SELECT  FirstName,\n" +
+                            "        LastName,\n" +
+                            "        case when City = 'London' then \n" +
+                            "            'Local' else 'Non-Local' end\n" +
+                            "\n" +
+                            "from Employees";
+
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(4, 0),
+                Ch = "\n",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        // The FROM below is every bit as lower case and stays that way: it is not what closed.
+        Assert.Equal("SELECT  FirstName,\n" +
+                     "        LastName,\n" +
+                     "        CASE WHEN City = 'London' THEN 'Local' ELSE 'Non-Local' END\n" +
+                     "\n" +
+                     "from Employees", Apply(text, edits));
+    }
+
     [Fact]
     public async Task OnTypeFormatting_ReturnsNothingWhenNothingWasClosed()
     {

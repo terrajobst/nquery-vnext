@@ -137,12 +137,23 @@ internal sealed partial class LanguageServerTarget
         return null;
     }
 
-    // Strictly inside the construct: not the whitespace in front of it, not the final newline that
-    // a construct ending the document would otherwise drag in, and -- when a keystroke put the
-    // cursor past it -- not the newline that was just typed either.
+    // The construct's own text and nothing on either side of it: not the whitespace in front of it,
+    // not the final newline that a construct ending the document would otherwise drag in, and --
+    // when a keystroke put the cursor past it -- not the newline that was just typed either.
+    //
+    // Containment rather than a strictly-inside comparison, because the first and last tokens are
+    // as much a part of the construct as anything between them. Rewriting a token's text is a
+    // change spanning exactly that token, so a strict comparison drops both ends -- and a lower
+    // case `case ... end` is precisely the pair it would leave standing.
+    //
+    // What containment lets back in is a gap that happens to be empty sitting on a boundary, which
+    // is a change to what is beside the construct rather than to it. The final newline is one of
+    // those, so they go by position instead.
     private static Func<TextChange, bool> Inside(TextSpan span)
     {
-        return c => c.Span.Start > span.Start && c.Span.End < span.End;
+        return c => c.Span.Start >= span.Start &&
+                    c.Span.End <= span.End &&
+                    (c.Span.Length > 0 || c.Span.Start != span.Start && c.Span.Start != span.End);
     }
 
     // Formatting is syntactic, so this needs the syntax tree and nothing else -- which is what keeps
