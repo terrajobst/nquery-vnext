@@ -44,6 +44,7 @@ public sealed class LanguageServerTests
         Assert.True(capabilities.SelectionRangeProvider);
         Assert.True(capabilities.DocumentFormattingProvider);
         Assert.True(capabilities.DocumentRangeFormattingProvider);
+        Assert.Equal(@")", capabilities.DocumentOnTypeFormattingProvider?.FirstTriggerCharacter);
         Assert.NotNull(capabilities.CompletionProvider);
         Assert.NotNull(capabilities.SemanticTokensProvider);
     }
@@ -385,6 +386,82 @@ public sealed class LanguageServerTests
 
         Assert.NotEmpty(edits);
         Assert.All(edits, e => Assert.Equal(1, e.Range.Start.Line));
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_OnlyFormatsTheConstructThatWasJustClosed()
+    {
+        await using var harness = await StartAsync();
+
+        // The clauses are laid out but their keywords are still lower case, so there is something
+        // outside the parentheses left to format -- and typing one is no reason to format it.
+        const string text = "select  COUNT(   *   )\nfrom    Customers";
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(0, text.IndexOf(')') + 1),
+                Ch = @")",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.NotEmpty(edits);
+        Assert.Equal("select  COUNT(*)\nfrom    Customers", Apply(text, edits));
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_DoesNotAddTheFinalNewline()
+    {
+        await using var harness = await StartAsync();
+
+        // The construct ends the document, so the change that would append the final newline sits
+        // right up against it. Formatting on save is what that change is for.
+        const string text = "SELECT  1\nFROM    Customers c\nWHERE   c.CompanyName IN ('a','b')";
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(2, text.Length - text.LastIndexOf('\n') - 1),
+                Ch = @")",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.Equal("SELECT  1\nFROM    Customers c\nWHERE   c.CompanyName IN ('a', 'b')", Apply(text, edits));
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_ReturnsNothingWhenNothingWasClosed()
+    {
+        await using var harness = await StartAsync();
+
+        // A client triggers on the character, not on the grammar, so it will ask about a ')' that
+        // closes nothing -- here one inside a string literal. That is a no-op, not a guess.
+        const string text = "select ')' from Customers";
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]?>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(0, text.IndexOf(')') + 1),
+                Ch = @")",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.Null(edits);
     }
 
     // Edits are against the document as it is now, so they are applied back to front.

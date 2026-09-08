@@ -169,6 +169,27 @@ public sealed record DocumentRangeFormattingParams
     public required FormattingOptions Options { get; init; }
 }
 
+// Unlike the other two, this one is driven by a keystroke rather than a command, so the trigger
+// characters are part of the capability: the client only asks after the user types one of them.
+public sealed record DocumentOnTypeFormattingOptions
+{
+    public required string FirstTriggerCharacter { get; init; }
+    public IReadOnlyList<string>? MoreTriggerCharacter { get; init; }
+}
+
+public sealed record DocumentOnTypeFormattingParams
+{
+    public required TextDocumentIdentifier TextDocument { get; init; }
+
+    // Where the cursor is now, which is just past the character that was typed.
+    public required Position Position { get; init; }
+
+    // Spelled `ch` by the protocol.
+    public required string Ch { get; init; }
+
+    public required FormattingOptions Options { get; init; }
+}
+
 // The client's editor settings for the document being formatted. These are the only formatting
 // values LSP itself defines; everything about SQL layout is server policy.
 public sealed record FormattingOptions

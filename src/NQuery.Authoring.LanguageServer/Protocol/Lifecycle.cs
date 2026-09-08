@@ -105,6 +105,7 @@ public sealed record ServerCapabilities
     public CodeActionOptions? CodeActionProvider { get; init; }
     public bool? DocumentFormattingProvider { get; init; }
     public bool? DocumentRangeFormattingProvider { get; init; }
+    public DocumentOnTypeFormattingOptions? DocumentOnTypeFormattingProvider { get; init; }
 
     // Non-standard NQuery capabilities (nquery/execute, nquery/showPlan) go here so a client can
     // discover them without guessing.

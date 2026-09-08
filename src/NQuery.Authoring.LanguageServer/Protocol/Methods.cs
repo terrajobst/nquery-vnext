@@ -30,6 +30,7 @@ public static class Methods
     public const string TextDocumentCodeAction = @"textDocument/codeAction";
     public const string TextDocumentFormatting = @"textDocument/formatting";
     public const string TextDocumentRangeFormatting = @"textDocument/rangeFormatting";
+    public const string TextDocumentOnTypeFormatting = @"textDocument/onTypeFormatting";
 
     // Window
     public const string WindowShowMessage = @"window/showMessage";

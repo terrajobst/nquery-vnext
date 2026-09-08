@@ -108,6 +108,7 @@ Every feature delegates to the existing authoring APIs:
 | `codeAction`          | `GetFixes(pos)`, `GetRefactorings(pos)`, `CodeIssue.Actions`  |
 | `formatting`          | `FormattingService.GetChanges(document)`                |
 | `rangeFormatting`     | `FormattingService.GetChanges(document, span)`          |
+| `onTypeFormatting`    | `FormattingService.GetChanges(document)`, kept to one node |
 
 Notes:
 
@@ -194,6 +195,21 @@ when the catalog failed to load. The SQL layout is server policy
 LSP itself defines -- tab size, spaces versus tabs, and the final newline -- which are the user's
 editor settings and so win over the defaults. The newline is taken from whatever the document
 already uses rather than from the server's platform.
+
+`onTypeFormatting` triggers on `)` alone. It is the only character in this grammar that ends a
+construct outright -- an argument list, a subquery, a derived table -- so there is something
+complete to format and no clause the user is still halfway through. The parenthesis the cursor
+sits behind is looked up, and the node it belongs to is what gets formatted; a `)` that closes
+nothing, because it is inside a string or the edit has not landed yet, formats nothing.
+
+All three format the whole document and then keep the changes the request asked about, because
+what a line is indented to depends on everything enclosing it. The two explicit requests keep
+whatever touches their span. `onTypeFormatting` keeps only what falls strictly inside the node,
+since nobody asked for it: not the whitespace in front of the construct, and not the final
+newline that a construct ending the document would otherwise drag in. The changes it does keep
+still assume the rest of the document is formatted, so a column can be computed for text that
+is not going to be rewritten -- the standing bargain of formatting part of something, and not one
+that costs anything in a document that formats on save.
 
 ### Not implemented
 

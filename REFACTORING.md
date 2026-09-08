@@ -322,8 +322,14 @@ structurally.
       `payload - 2`. Cheap, but it interacts with alignment in every list.
     - **Per-clause list styles.** `SelectColumns` governs the select list; every
       other list wraps on demand. Splitting them is a rename away.
-    - **Format on type.** `onTypeFormatting` over the just-closed construct would
-      reuse the range path unchanged.
+    - **Format on type formats against a document it assumes is formatted.**
+      `onTypeFormatting` is implemented, triggering on `)` and keeping only the
+      changes strictly inside the node the parenthesis closes. Those changes are
+      still computed by formatting the whole document, so a kept change can carry
+      a column that only holds if the text around it is rewritten too -- which on
+      save it is. Fixing it properly means formatting a span against the document
+      as it actually reads outside that span, which is a real feature rather than
+      a filter.
 * Add a `RenameService`. `SymbolSearchService.FindUsages` already produces the
   definition and reference spans, so the mechanical edit is nearly free; what
   makes rename a real feature rather than a search-and-replace is everything
