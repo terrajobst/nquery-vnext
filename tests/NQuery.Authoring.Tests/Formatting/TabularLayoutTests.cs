@@ -91,6 +91,34 @@ public class TabularLayoutTests : FormattingTests
         AssertFormats(query, expected);
     }
 
+    // A CASE breaks whether or not it would fit. Its labels are the branches of a decision, and
+    // reading them off one line is what makes a CASE hard to follow.
+    [Fact]
+    public void Tabular_BreaksEveryCaseLabelOntoItsOwnLine()
+    {
+        AssertFormats("SELECT CASE WHEN e.City = 'London' THEN 1 ELSE 2 END FROM Employees e", """
+            SELECT  CASE
+                        WHEN e.City = 'London' THEN 1
+                        ELSE 2
+                    END
+            FROM    Employees e
+            """);
+    }
+
+    // The input of a CASE x WHEN form is not a branch, so it stays on the keyword's line.
+    [Fact]
+    public void Tabular_KeepsACaseInputOnTheKeywordLine()
+    {
+        AssertFormats("SELECT CASE e.City WHEN 'London' THEN 1 WHEN 'Paris' THEN 2 ELSE 3 END FROM Employees e", """
+            SELECT  CASE e.City
+                        WHEN 'London' THEN 1
+                        WHEN 'Paris' THEN 2
+                        ELSE 3
+                    END
+            FROM    Employees e
+            """);
+    }
+
     [Fact]
     public void Tabular_IndentsDerivedTables()
     {

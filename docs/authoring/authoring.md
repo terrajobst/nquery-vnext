@@ -303,8 +303,26 @@ Layout decisions come from two places. `SpacingRules` answers what goes between 
 token pair, and `LayoutWalker` overrides that where structure demands a line
 break, an indent, or the tabular pad. An unresolved break is a *soft* line: it
 renders as a break only when the enclosing group -- an argument list, a
-subquery, a CASE, a chain of ANDs, an operator and its operands -- does not fit
-inside `MaxLineLength`.
+subquery, a chain of ANDs, an operator and its operands -- does not fit inside
+`MaxLineLength`.
+
+A few breaks are not soft at all, because they are structure rather than a
+matter of width: a clause keyword, a CTE body, and every label of a `CASE`.
+
+```
+CASE
+    WHEN … THEN …
+    ELSE …
+END
+```
+
+`WHEN` starts a line and is indented under the keyword, `THEN` stays beside the
+`WHEN` it answers, and `END` drops back to the column the `CASE` started its line
+at. A `CASE x WHEN` keeps its input on the keyword's line, since that is what the
+labels are compared against rather than a branch of its own. This holds whether
+or not the whole thing would have fit: the labels are the branches of a decision,
+and reading them off one line is what makes a `CASE` hard to follow. It also
+means a list holding a `CASE` can never itself be flat.
 
 An `AND`/`OR` chain is one group, so it breaks as a unit. Every other operator
 gets a group of its own instead, which nests them the way precedence does: the
@@ -319,8 +337,9 @@ od.UnitPrice * od.Quantity
 
 Comments are never moved, only re-indented, and a single line comment always ends
 its line. A block comment written on one line does not force its group to break --
-it is simply more text on the line, and counts against `MaxLineLength` as such. A region around a missing or skipped token is copied through verbatim,
-so a document that does not parse still formats everywhere else.
+it is simply more text on the line, and counts against `MaxLineLength` as such. A
+region around a missing or skipped token is copied through verbatim, so a document
+that does not parse still formats everywhere else.
 
 `FormattingOptions` is a parameter rather than service state, and ships as three
 presets: `Tabular` (the default -- keyword flush left, payload padded to

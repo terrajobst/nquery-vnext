@@ -148,28 +148,14 @@ public class FormattingOptionTests : FormattingTests
         AssertFormats(query, expected, options);
     }
 
+    // Zero turns off wrapping, and wrapping is about width. A break the layout asks for whatever the
+    // width -- a clause keyword, a CASE label -- is structure, and still happens.
     [Fact]
-    public void MaxLineLength_OfZeroNeverBreaks()
+    public void MaxLineLength_OfZeroOnlyStopsBreakingForWidth()
     {
         var options = FormattingOptions.Tabular with { MaxLineLength = 0 };
 
         var query = "SELECT CASE WHEN e.City = 'London' THEN 1 ELSE 2 END FROM Employees e WHERE e.City = 'London' AND e.Country = 'UK' AND e.EmployeeID > 4";
-
-        var expected = """
-            SELECT  CASE WHEN e.City = 'London' THEN 1 ELSE 2 END
-            FROM    Employees e
-            WHERE   e.City = 'London' AND e.Country = 'UK' AND e.EmployeeID > 4
-            """;
-
-        AssertFormats(query, expected, options);
-    }
-
-    [Fact]
-    public void MaxLineLength_BreaksCaseExpressions()
-    {
-        var options = FormattingOptions.Tabular with { MaxLineLength = 40 };
-
-        var query = "SELECT CASE WHEN e.City = 'London' THEN 1 ELSE 2 END FROM Employees e";
 
         var expected = """
             SELECT  CASE
@@ -177,6 +163,7 @@ public class FormattingOptionTests : FormattingTests
                         ELSE 2
                     END
             FROM    Employees e
+            WHERE   e.City = 'London' AND e.Country = 'UK' AND e.EmployeeID > 4
             """;
 
         AssertFormats(query, expected, options);

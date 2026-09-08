@@ -537,7 +537,10 @@ public sealed class LanguageServerTests
                 Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
             });
 
-        Assert.Equal("SELECT  CASE WHEN 1 = 1 THEN 2 ELSE 3 END\n" +
+        Assert.Equal("SELECT  CASE\n" +
+                     "            WHEN 1 = 1 THEN 2\n" +
+                     "            ELSE 3\n" +
+                     "        END\n" +
                      "AS Category\n" +
                      "FROM    Employees", Apply(text, edits));
     }
@@ -667,7 +670,10 @@ public sealed class LanguageServerTests
         // The FROM below is every bit as lower case and stays that way: it is not what closed.
         Assert.Equal("SELECT  FirstName,\n" +
                      "        LastName,\n" +
-                     "        CASE WHEN City = 'London' THEN 'Local' ELSE 'Non-Local' END\n" +
+                     "        CASE\n" +
+                     "            WHEN City = 'London' THEN 'Local'\n" +
+                     "            ELSE 'Non-Local'\n" +
+                     "        END\n" +
                      "\n" +
                      "from Employees", Apply(text, edits));
     }

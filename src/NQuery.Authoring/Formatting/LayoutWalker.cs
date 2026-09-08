@@ -398,30 +398,35 @@ internal sealed class LayoutWalker
         _group = restore;
     }
 
+    // A CASE always breaks: every label on its own line, indented under the keyword, with THEN kept
+    // beside the WHEN it answers and END dropped back to the column the CASE started its line at.
+    // The labels are the branches of a decision, and reading them off one line is what makes a CASE
+    // hard to follow -- so this is structure rather than a matter of width, the same call the CTE
+    // body makes. Nothing here is a soft line, which is also what makes it a decision the enclosing
+    // group inherits: a list holding a CASE cannot itself be flat.
     private void VisitCaseExpression(CaseExpressionSyntax node, int lineIndent)
     {
-        var restore = PushGroup(node);
         var inner = lineIndent + _options.IndentSize;
 
+        // The input of a CASE x WHEN form stays on the keyword's line: it is what the labels are
+        // compared against, not a branch of its own.
         if (node.InputExpression is not null)
             VisitExpression(node.InputExpression, lineIndent);
 
         foreach (var label in node.CaseLabels)
         {
-            SetGap(label.WhenKeyword, GapKind.SoftLine, inner);
+            SetGap(label.WhenKeyword, GapKind.Line, inner);
             VisitExpression(label.WhenExpression, inner);
             VisitExpression(label.ThenExpression, inner);
         }
 
         if (node.ElseLabel is not null)
         {
-            SetGap(node.ElseLabel.ElseKeyword, GapKind.SoftLine, inner);
+            SetGap(node.ElseLabel.ElseKeyword, GapKind.Line, inner);
             VisitExpression(node.ElseLabel.Expression, inner);
         }
 
-        SetGap(node.EndKeyword, GapKind.SoftLine, lineIndent);
-
-        _group = restore;
+        SetGap(node.EndKeyword, GapKind.Line, lineIndent);
     }
 
     private void VisitArgumentList(ArgumentListSyntax node, int lineIndent)
