@@ -512,6 +512,45 @@ public sealed class LanguageServerTests
     }
 
     [Fact]
+    public async Task OnTypeFormatting_OnNewLineClearsTheLineTheCursorLandedOn()
+    {
+        await using var harness = await StartAsync();
+
+        // The client auto-indents the new line to match the one above, so the cursor lands in the
+        // middle of whitespace that belongs to nothing. Rendering the gap after the construct is
+        // what clears it.
+        const string text = "SELECT  FirstName,\n" +
+                            "          LastName,\n" +
+                            "          case when City = 'London' then\n" +
+                            "              'Local' else 'Non-Local' end\n" +
+                            "              \n" +
+                            "from Employees";
+
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(4, 14),
+                Ch = "\n",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.Equal("SELECT  FirstName,\n" +
+                     "        LastName,\n" +
+                     "        CASE\n" +
+                     "            WHEN City = 'London' THEN 'Local'\n" +
+                     "            ELSE 'Non-Local'\n" +
+                     "        END\n" +
+                     "\n" +
+                     "from Employees", Apply(text, edits));
+    }
+
+    [Fact]
     public async Task OnTypeFormatting_OnNewLineKeepsTheNewLineThatWasJustTyped()
     {
         await using var harness = await StartAsync();

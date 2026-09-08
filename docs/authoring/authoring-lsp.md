@@ -225,15 +225,21 @@ for them:
 | Trigger | Keeps                                                                        |
 | ------- | ---------------------------------------------------------------------------- |
 | `)`     | Strictly inside the node -- not the whitespace in front of the construct, and not the final newline a construct ending the document would drag in. |
-| `\n`    | Inside the construct that ended, on the same terms.                          |
+| `\n`    | Inside the construct that ended, on the same terms, plus the gap right after it -- but only where that still comes out as a line break. |
 
 Neither uses the node's *full* span, which looks like the better answer and isn't. It comes down to
 where the lexer splits trivia: a line's ending belongs to the token it follows, so a node's leading
 trivia holds only the indent after that newline, while the formatter's change for that indent is the
-whole gap spanning the newline -- which begins before the full span and is rejected either way. Full
-span reaches further only at the far end, over the newline that was just typed, and admits exactly
-one change: the gap after the construct, which *is* that newline. Excluding it costs nothing and
-saves having a rule to protect it.
+whole gap spanning the newline -- which begins before the full span and is rejected either way. At
+the far end full span reaches over the newline just typed, and whether it reaches far enough to take
+in the gap holding it depends on how the *next* line happens to be indented. That gap is worth
+having, so `\n` names it outright rather than leaving it to a span boundary.
+
+It is worth having because the client indents the new line for you, matching the line above, and the
+cursor then lands in the middle of whitespace belonging to nothing. Rendering the gap is what clears
+it. The same rendering would just as happily close the gap up and pull the next token onto that
+line, so what comes out has to still be a line break -- ending a line did not ask for the newline
+back.
 
 Both filters are containments rather than strictly-inside comparisons, because a construct's first
 and last tokens are as much a part of it as anything between them: rewriting a token's text is a

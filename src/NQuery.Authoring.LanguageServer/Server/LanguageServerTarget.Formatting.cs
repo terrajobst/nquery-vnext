@@ -97,7 +97,22 @@ internal sealed partial class LanguageServerTarget
         if (node is null)
             return null;
 
-        return Inside(node.Span);
+        var span = node.Span;
+        var inside = Inside(span);
+
+        return c =>
+        {
+            // The gap after the construct holds the newline just typed, and with it whatever indent
+            // the client auto-inserted on the line the cursor landed on -- rendering it is what
+            // clears that line, which is otherwise left carrying the indentation of the line above.
+            // It may only become something that is still a line break, though: the formatter would
+            // just as happily close the gap up and pull the next token onto this line, and taking
+            // back the newline that was just typed is not something ending a line asked for.
+            if (c.Span.Start == span.End)
+                return c.NewText.Contains('\n');
+
+            return inside(c);
+        };
     }
 
     private static Func<TextChange, bool>? GetJustClosedFilter(SyntaxTree syntaxTree, int position)
