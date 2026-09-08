@@ -140,10 +140,11 @@ or derived table you were in the middle of — and Enter reformats the line it j
 indentation included. Neither touches anything else, and Enter will never pull the line back up
 onto the previous one, whatever the formatter would rather it did.
 
-VS Code only asks for either when `editor.formatOnType` is on, and the extension deliberately
-does not turn it on for you: formatting as you type is a matter of taste in a way that formatting
-on save is not. `"[nquery]": { "editor.formatOnType": true }` in your settings enables it. It
-expects the rest of the file to be formatted already, which after a save it is.
+This is contributed the same way as format on save, as `"[nquery]": { "editor.formatOnType":
+true }`, and rests on it: both keystrokes format the line or construct against a document they
+assume is already formatted, which after a save it is. `"[nquery]": { "editor.formatOnType":
+false }` in your settings turns it off, and your global `editor.formatOnType` is unaffected
+either way.
 
 AI inline suggestions are off in these files, contributed the same way: `"[nquery]":
 { "editor.inlineSuggest.enabled": false }`. Ghost text competes with the server for the Tab key,
