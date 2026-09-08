@@ -135,12 +135,15 @@ unaffected either way. What the formatting looks like comes from the server and 
 `.editorconfig` above the file — see the formatter's EditorConfig keys in
 `docs/authoring/authoring.md`.
 
-Typing a `)` reformats what it closed — the argument list, subquery or derived table you were
-in the middle of — and nothing else. VS Code only asks for that when `editor.formatOnType` is on,
-and the extension deliberately does not turn it on for you: formatting as you type is a matter of
-taste in a way that formatting on save is not. `"[nquery]": { "editor.formatOnType": true }` in
-your settings enables it. It expects the rest of the file to be formatted already, which after a
-save it is.
+Two keystrokes format as you type. A `)` reformats what it closed — the argument list, subquery
+or derived table you were in the middle of — and Enter reformats the line it just ended, its
+indentation included. Neither touches anything else, and Enter will never pull the line back up
+onto the previous one, whatever the formatter would rather it did.
+
+VS Code only asks for either when `editor.formatOnType` is on, and the extension deliberately
+does not turn it on for you: formatting as you type is a matter of taste in a way that formatting
+on save is not. `"[nquery]": { "editor.formatOnType": true }` in your settings enables it. It
+expects the rest of the file to be formatted already, which after a save it is.
 
 AI inline suggestions are off in these files, contributed the same way: `"[nquery]":
 { "editor.inlineSuggest.enabled": false }`. Ghost text competes with the server for the Tab key,

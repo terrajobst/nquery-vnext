@@ -30,7 +30,7 @@ internal sealed partial class LanguageServerTarget
             return null;
 
         var range = snapshot.Value.Document.Text.ToTextSpan(parameters.Range);
-        return await FormatAsync(parameters.TextDocument.Uri, parameters.Options, range.IntersectsWith, cancellationToken);
+        return await FormatAsync(parameters.TextDocument.Uri, parameters.Options, c => range.IntersectsWith(c.Span), cancellationToken);
     }
 
     [JsonRpcMethod(Methods.TextDocumentOnTypeFormatting, UseSingleObjectParameterDeserialization = true)]
@@ -44,21 +44,47 @@ internal sealed partial class LanguageServerTarget
 
         var document = snapshot.Value.Document;
         var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken);
-        var position = document.Text.ToOffset(parameters.Position);
 
-        var construct = GetJustClosedSpan(syntaxTree, position);
-        if (construct is null)
+        // Nobody asked for any of this -- it is a keystroke, not a command -- so each trigger says
+        // exactly which changes it will take, and range formatting's "anything that touches the
+        // span" is far too generous for either of them.
+        var keep = parameters.Ch.Contains('\n')
+                    ? GetCompletedLineFilter(document.Text, parameters.Position.Line)
+                    : GetJustClosedFilter(syntaxTree, document.Text.ToOffset(parameters.Position));
+
+        if (keep is null)
             return null;
 
-        // Strictly inside, where range formatting takes anything that so much as touches its span.
-        // Nobody asked for this one -- it is a keystroke, not a command -- so it has no business
-        // reaching past the construct: not to the whitespace in front of it, and not to the final
-        // newline, which a construct ending the document would otherwise drag in.
-        var span = construct.Value;
-        return await FormatAsync(parameters.TextDocument.Uri,
-                                 parameters.Options,
-                                 c => c.Start > span.Start && c.End < span.End,
-                                 cancellationToken);
+        return await FormatAsync(parameters.TextDocument.Uri, parameters.Options, keep, cancellationToken);
+    }
+
+    // The line the newline just ended, which is the one above the cursor.
+    private static Func<TextChange, bool>? GetCompletedLineFilter(SourceText text, int cursorLine)
+    {
+        if (cursorLine <= 0 || cursorLine >= text.Lines.Count)
+            return null;
+
+        var line = text.Lines[cursorLine - 1].Span;
+
+        return c =>
+        {
+            // Everything the line holds outright: its spacing, its casing, and a break the
+            // formatter wants inside it. The gap after the last token is not one of these -- that
+            // is where the newline just typed lives, and rendering it is how the formatter would
+            // take it straight back.
+            if (c.Span.Start >= line.Start && c.Span.End <= line.End)
+                return true;
+
+            // The line's own indentation, which sits in the gap in front of it and so starts on the
+            // line before. An indent that came out wrong is much of what Enter is pressed to fix,
+            // so this is worth reaching back for -- but only while it stays an indent. A
+            // replacement with no newline left in it would pull the line up onto the previous one,
+            // and moving text that is already placed is the opposite of what Enter asked for.
+            return c.Span.Start < line.Start &&
+                   c.Span.End >= line.Start &&
+                   c.Span.End <= line.End &&
+                   c.NewText.Contains('\n');
+        };
     }
 
     // What the parenthesis the user just typed closes. The cursor sits immediately after it, so the
@@ -69,17 +95,20 @@ internal sealed partial class LanguageServerTarget
     // Formatting the parent node rather than the parenthesis pair is what makes the result useful:
     // the pair is just two characters, while the node is the argument list or subquery that was
     // being typed, and its layout is the thing that was left half-done.
-    private static TextSpan? GetJustClosedSpan(SyntaxTree syntaxTree, int position)
+    private static Func<TextChange, bool>? GetJustClosedFilter(SyntaxTree syntaxTree, int position)
     {
         var token = syntaxTree.Root.FindTokenOnLeft(position);
 
         if (token.Kind != SyntaxKind.RightParenthesisToken || token.IsMissing)
             return null;
 
-        if (token.Span.End != position)
+        if (token.Span.End != position || token.Parent is not { } node)
             return null;
 
-        return token.Parent?.Span;
+        // Strictly inside the construct: not the whitespace in front of it, and not the final
+        // newline, which a construct ending the document would otherwise drag in.
+        var span = node.Span;
+        return c => c.Span.Start > span.Start && c.Span.End < span.End;
     }
 
     // Formatting is syntactic, so this needs the syntax tree and nothing else -- which is what keeps
@@ -91,7 +120,7 @@ internal sealed partial class LanguageServerTarget
     // that isn't, a kept change can carry a column computed for text nobody is going to rewrite.
     // That is the standing bargain of formatting a part of something, and it costs nothing in the
     // documents this is used on, which format on save.
-    private async Task<TextEdit[]?> FormatAsync(Uri uri, LspFormattingOptions clientOptions, Func<TextSpan, bool>? keep, CancellationToken cancellationToken)
+    private async Task<TextEdit[]?> FormatAsync(Uri uri, LspFormattingOptions clientOptions, Func<TextChange, bool>? keep, CancellationToken cancellationToken)
     {
         var snapshot = await TryGetSnapshotAsync(uri, cancellationToken);
         if (snapshot is null)
@@ -110,7 +139,7 @@ internal sealed partial class LanguageServerTarget
 
         var changes = service.GetChanges(document, options, cancellationToken);
 
-        return [.. changes.Where(c => keep is null || keep(c.Span))
+        return [.. changes.Where(c => keep is null || keep(c))
                           .Select(c => new TextEdit { Range = text.ToRange(c.Span), NewText = c.NewText })];
     }
 

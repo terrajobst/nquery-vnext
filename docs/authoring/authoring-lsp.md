@@ -196,20 +196,36 @@ LSP itself defines -- tab size, spaces versus tabs, and the final newline -- whi
 editor settings and so win over the defaults. The newline is taken from whatever the document
 already uses rather than from the server's platform.
 
-`onTypeFormatting` triggers on `)` alone. It is the only character in this grammar that ends a
-construct outright -- an argument list, a subquery, a derived table -- so there is something
-complete to format and no clause the user is still halfway through. The parenthesis the cursor
-sits behind is looked up, and the node it belongs to is what gets formatted; a `)` that closes
-nothing, because it is inside a string or the edit has not landed yet, formats nothing.
+`onTypeFormatting` triggers on two characters, each standing for a different moment at which
+something is finished enough to format:
 
-All three format the whole document and then keep the changes the request asked about, because
-what a line is indented to depends on everything enclosing it. The two explicit requests keep
-whatever touches their span. `onTypeFormatting` keeps only what falls strictly inside the node,
-since nobody asked for it: not the whitespace in front of the construct, and not the final
-newline that a construct ending the document would otherwise drag in. The changes it does keep
-still assume the rest of the document is formatted, so a column can be computed for text that
-is not going to be rewritten -- the standing bargain of formatting part of something, and not one
-that costs anything in a document that formats on save.
+- **`)`** ends a construct outright -- an argument list, a subquery, a derived table -- and is the
+  only character in this grammar that does. The parenthesis the cursor sits behind is looked up
+  and the node it belongs to is formatted. A `)` that closes nothing, because it is inside a
+  string or because the edit has not landed yet, formats nothing.
+- **`\n`** ends a line. What gets formatted is the line the newline ended, which is the one above
+  the cursor, never the empty one the cursor landed on.
+
+All three requests format the whole document and then keep the changes that were actually asked
+about, because what a line is indented to depends on everything enclosing it. The two explicit
+ones keep whatever touches their span. The two triggers are far stricter, because nobody asked
+for them:
+
+| Trigger | Keeps                                                                        |
+| ------- | ---------------------------------------------------------------------------- |
+| `)`     | Strictly inside the node -- not the whitespace in front of the construct, and not the final newline a construct ending the document would drag in. |
+| `\n`    | Inside the completed line, plus the line's own indentation -- and that only while it stays an indent. |
+
+The line's indentation lives in the gap in front of it, which starts on the line before, so it is
+the one change either trigger reaches backwards for. An indent that came out wrong is much of what
+Enter is pressed to fix. But a replacement with no newline left in it would pull the line up onto
+the previous one, so that one is dropped: pressing Enter is not an invitation to undo the Enter.
+By the same reasoning the gap *after* the last token on the line is never touched -- that is where
+the newline just typed lives.
+
+The changes that are kept still assume the rest of the document is formatted, so a column can be
+computed for text that is not going to be rewritten -- the standing bargain of formatting part of
+something, and not one that costs anything in a document that formats on save.
 
 ### Not implemented
 

@@ -45,6 +45,7 @@ public sealed class LanguageServerTests
         Assert.True(capabilities.DocumentFormattingProvider);
         Assert.True(capabilities.DocumentRangeFormattingProvider);
         Assert.Equal(@")", capabilities.DocumentOnTypeFormattingProvider?.FirstTriggerCharacter);
+        Assert.Equal(["\n"], capabilities.DocumentOnTypeFormattingProvider?.MoreTriggerCharacter);
         Assert.NotNull(capabilities.CompletionProvider);
         Assert.NotNull(capabilities.SemanticTokensProvider);
     }
@@ -437,6 +438,77 @@ public sealed class LanguageServerTests
             });
 
         Assert.Equal("SELECT  1\nFROM    Customers c\nWHERE   c.CompanyName IN ('a', 'b')", Apply(text, edits));
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_OnNewLineFormatsTheLineThatWasJustEnded()
+    {
+        await using var harness = await StartAsync();
+
+        const string text = "select 1,2\n";
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(1, 0),
+                Ch = "\n",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.Equal("SELECT  1,\n        2\n", Apply(text, edits));
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_OnNewLineFixesTheIndentOfThatLine()
+    {
+        await using var harness = await StartAsync();
+
+        const string text = "SELECT  1\n    FROM    Customers\n";
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(2, 0),
+                Ch = "\n",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.Equal("SELECT  1\nFROM    Customers\n", Apply(text, edits));
+    }
+
+    [Fact]
+    public async Task OnTypeFormatting_OnNewLineNeverTakesTheNewLineBack()
+    {
+        await using var harness = await StartAsync();
+
+        // The formatter would put these two on one line, and reindenting the second is how it would
+        // do it. Pressing Enter is not an invitation to undo the Enter.
+        const string text = "select\n1\n";
+        var opened = harness.ExpectDiagnostics(DocumentUri);
+        await harness.OpenAsync(DocumentUri, text);
+        await opened;
+
+        var edits = await harness.RequestAsync<TextEdit[]>(
+            Methods.TextDocumentOnTypeFormatting,
+            new DocumentOnTypeFormattingParams
+            {
+                TextDocument = Document(),
+                Position = At(2, 0),
+                Ch = "\n",
+                Options = new FormattingOptions { TabSize = 4, InsertSpaces = true }
+            });
+
+        Assert.Equal(text, Apply(text, edits));
     }
 
     [Fact]

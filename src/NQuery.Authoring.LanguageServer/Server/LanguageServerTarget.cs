@@ -147,12 +147,17 @@ internal sealed partial class LanguageServerTarget : ILanguageServerHost
             DocumentRangeFormattingProvider = true,
             DocumentOnTypeFormattingProvider = new DocumentOnTypeFormattingOptions
             {
-                // Only the closing parenthesis. It is the one character in this grammar that ends a
-                // construct outright -- an argument list, a subquery, a derived table -- so there is
-                // something complete to format and no risk of reformatting a clause the user is
-                // still in the middle of typing. END closes a CASE just as definitely, but a
-                // trigger is a single character and 'D' is not one.
-                FirstTriggerCharacter = @")"
+                // The closing parenthesis is the one character in this grammar that ends a construct
+                // outright -- an argument list, a subquery, a derived table -- so there is something
+                // complete to format and no risk of reformatting a clause the user is still in the
+                // middle of typing. END closes a CASE just as definitely, but a trigger is a single
+                // character and 'D' is not one.
+                FirstTriggerCharacter = @")",
+
+                // Enter ends a line, which is the other moment something is finished enough to
+                // format. What gets formatted is the line it ended, never the empty one the cursor
+                // landed on.
+                MoreTriggerCharacter = ["\n"]
             },
             CodeActionProvider = new CodeActionOptions
             {
