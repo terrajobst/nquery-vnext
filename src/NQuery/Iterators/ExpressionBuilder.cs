@@ -456,7 +456,7 @@ namespace NQuery.Iterators
             if (caseLabelIndex == caseExpression.CaseLabels.Length)
                 return caseExpression.ElseExpression is null
                            ? BuildNullValue(caseExpression.Type)
-                           : BuildNestedScopeInvocation(caseExpression.ElseExpression);
+                           : BuildNestedScopeExpression(caseExpression.ElseExpression);
 
             var caseLabel = caseExpression.CaseLabels[caseLabelIndex];
             var condition = caseLabel.Condition;
@@ -465,21 +465,20 @@ namespace NQuery.Iterators
             return
                 Expression.Condition(
                     Expression.Equal(
-                        BuildNestedScopeInvocation(condition),
+                        BuildNestedScopeExpression(condition),
                         BuildNullableTrue()
                     ),
-                    BuildNestedScopeInvocation(result),
+                    BuildNestedScopeExpression(result),
                     BuildCaseLabel(caseExpression, caseLabelIndex + 1)
                 );
         }
 
-        private Expression BuildNestedScopeInvocation(BoundExpression expression)
+        private Expression BuildNestedScopeExpression(BoundExpression expression)
         {
-            var targetType = expression.Type;
-            var delegateType = typeof(Func<>).MakeGenericType(targetType);
-            var lambda = BuildExpression(expression, delegateType, targetType, _rowBufferAllocation);
-            var invocation = Expression.Invoke(lambda);
-            return BuildLiftedExpression(invocation);
+            var nestedBuilder = new ExpressionBuilder(_rowBufferAllocation);
+            var result = nestedBuilder.BuildCachedExpression(expression);
+            var assignments = nestedBuilder._assignments.Concat(new[] { result });
+            return Expression.Block(nestedBuilder._locals, assignments);
         }
     }
 }
